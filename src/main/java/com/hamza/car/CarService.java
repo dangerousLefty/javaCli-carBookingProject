@@ -1,16 +1,15 @@
 package com.hamza.car;
 
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 public class CarService {
-    private CarDAO carDAO;
+    private final CarDAO carDAO = new CarDAO();
 
-    public CarService(CarDAO carDAO){this.carDAO = carDAO;}
-
-    public Car getCar(String id){
+    public Car getCar(UUID id){
         return carDAO.findCarById(id)
                 .orElseThrow(() -> new NoSuchElementException(
-                        "❌ Car not found with id ".concat(id)
+                        "❌ Car not found with id ".concat(id.toString())
                 ));
     }
 
@@ -18,7 +17,7 @@ public class CarService {
         return carDAO.getCars();
     }
 
-    public void getCarList(){
+    public void getAvailableCars(){
         for (Car c : getCars()){
             if (!c.getBooked()){
                 System.out.println(c);
@@ -26,9 +25,9 @@ public class CarService {
         }
     }
 
-    public void getEvCarList(){
+    public void getAvailableEVcars(){
         for (Car c : getCars()){
-            if (!c.getBooked() && c.getCarType().equals(CarType.EV)){
+            if (!c.getBooked() && c.getType().equals(CarType.EV)){
                 System.out.println(c);
             }
         }

@@ -5,42 +5,50 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Car {
-    private UUID carId;
-    private CarMake carMake;
-    private CarType carType;
+    private UUID id;
+    private CarMake make;
+    private CarType type;
     private BigDecimal rentalRate;
     private boolean isBooked;
 
-    public Car(UUID carId, CarMake carMake, CarType carType, BigDecimal rentalRate, boolean isBooked) {
-        this.carId = carId;
-        this.carMake = carMake;
-        this.carType = carType;
+    public Car(UUID id, CarMake make, CarType type, BigDecimal rentalRate, boolean isBooked) {
+        this.id = id;
+        this.make = make;
+        this.type = type;
         this.rentalRate = rentalRate;
         this.isBooked = isBooked;
     }
 
-    public UUID getCarId() {
-        return carId;
+    public UUID getId() {
+        return id;
     }
 
-    public String getCarIdString(){
-        return carId.toString();
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public void setCarId(UUID carId) {
-        this.carId = carId;
+    public CarMake getMake() {
+        return make;
     }
 
-    public CarMake getCarMake() {
-        return carMake;
+    public void setMake(CarMake make) {
+        this.make = make;
     }
 
-    public void setCarMake(CarMake carMake) {
-        this.carMake = carMake;
+    public CarType getType() {
+        return type;
     }
 
-    public CarType getCarType() {
-        return carType;
+    public void setType(CarType type) {
+        this.type = type;
+    }
+
+    public BigDecimal getRentalRate() {
+        return rentalRate;
+    }
+
+    public void setRentalRate(BigDecimal rentalRate) {
+        this.rentalRate = rentalRate;
     }
 
     public boolean getBooked() {
@@ -51,29 +59,25 @@ public class Car {
         isBooked = booked;
     }
 
-    public void setCarType(CarType carType) {
-        this.carType = carType;
-    }
-
-    @Override
-    public String toString() {
+    @java.lang.Override
+    public java.lang.String toString() {
         return "Car{" +
-                "carId=" + carId +
-                ", carMake=" + carMake +
-                ", carType=" + carType +
-                ", rentalRate=" + rentalRate.toString() +
+                "id=" + id +
+                ", make=" + make +
+                ", type=" + type +
+                ", rentalRate=" + rentalRate +
+                ", isBooked=" + isBooked +
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Car car = (Car) o;
-        return Objects.equals(carId, car.carId) && carMake == car.carMake && carType == car.carType;
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        if (!super.equals(object)) return false;
+        Car car = (Car) object;
+        return isBooked == car.isBooked && java.util.Objects.equals(id, car.id) && java.util.Objects.equals(make, car.make) && java.util.Objects.equals(type, car.type) && java.util.Objects.equals(rentalRate, car.rentalRate);
     }
 
-    @Override
     public int hashCode() {
-        return Objects.hash(carId, carMake, carType);
+        return Objects.hash(super.hashCode(), id, make, type, rentalRate, isBooked);
     }
 }

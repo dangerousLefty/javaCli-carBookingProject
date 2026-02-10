@@ -1,13 +1,23 @@
 package com.hamza.booking;
 
+import java.util.Arrays;
+
 public class BookingDAO {
 
     //the DAO objects are responsible of retrieving
     //data from the database. doesn't think about
     //whether string passed to it is valid or not
-    private static final Booking[] bookings;
-    private static final int maxBookings = 50;
-    private static int bookingSize = 0;
+    //since we keep changing the size of the array,
+    // we cant make this variable to be final
+    private static Booking[] bookings;
+
+    //booking Array starts with 1,
+    //then increments every time it gets full
+    //this will be the size of the Booking array
+    private static int maxBookings = 1;
+
+    //how many bookings are currently in the Array
+    private static int numOfBookings = 0;
 
     static {
         bookings = new Booking[maxBookings];
@@ -17,17 +27,28 @@ public class BookingDAO {
         return bookings;
     }
 
-    public static int getBookingSize() {
-        return bookingSize;
+    public static int getNumOfBookings() {
+        return numOfBookings;
+    }
+
+    public static void decrementBookings(){
+        numOfBookings--;
     }
 
     public static int getMaxBookings(){
         return maxBookings;
     }
 
-    public void addBooking(Booking booking){
-        bookings[bookingSize] = booking;
-        bookingSize++;
+
+
+    public static void expandArray(){
+        maxBookings *= 2;
+        bookings = Arrays.copyOf(bookings, maxBookings);
+    }
+
+    public void addBooking(Booking booking, int i){
+        bookings[i] = booking;
+        numOfBookings++;
     }
 
 }

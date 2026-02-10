@@ -27,10 +27,10 @@ public class UserDAO {
         return userList;
     }
 
-    public Optional<User> findUserById(String id){
+    public Optional<User> findUserById(UUID id){
         //Optional<User> returnUser;
         for (User u : userList){
-            if (u.getUserIdString().equals(id)){
+            if (u.getUserID().equals(id)){
                 return Optional.of(u);
             }
         }

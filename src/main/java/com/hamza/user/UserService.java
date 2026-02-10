@@ -5,16 +5,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class UserService {
-    private UserDAO userDAO;
+    private final UserDAO userDAO = new UserDAO();
 
-    public UserService(UserDAO userDAO){
-        this.userDAO = userDAO;
-    }
-
-    public User getUser(String id){
+    public User getUser(UUID id){
         return userDAO.findUserById(id)
                 .orElseThrow(() -> new NoSuchElementException(
-                        "❌ User not found with id ".concat(id)
+                        "❌ User not found with id ".concat(id.toString())
                 ));
     }
 
@@ -22,9 +18,10 @@ public class UserService {
         return userDAO.getUsers();
     }
 
+    /*
     public void getUserList(){
         for (User u : getUsers()){
             System.out.println(u.toString());
         }
-    }
+    } */
 }

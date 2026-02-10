@@ -24,15 +24,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //should be removed later
-        UserDAO userDAO = new UserDAO();
-        CarDAO carDAO = new CarDAO();
-        BookingDAO bookingDAO = new BookingDAO();
-
-        UserService userService = new UserService(userDAO);
-        CarService carService = new CarService(carDAO);
-        BookingService bookingService = new BookingService(bookingDAO);
-
+        UserService userService = new UserService();
+        CarService carService = new CarService();
+        BookingService bookingService = new BookingService();
 
 
         Scanner scanner = new Scanner(System.in);
@@ -41,108 +35,151 @@ public class Main {
 //            System.out.println(UUID.randomUUID().toString());
 //        }
         boolean flag = false;
-        while (!flag){
-            User tempUser = null;
-            Car tempCar = null;
-            System.out.println("Hi! Welcome to your car booking app. ");
-            System.out.println("Please select one of the options to get started: ");
-            System.out.println("1\uFE0F⃣ - Book Car");
-            System.out.println("2\uFE0F⃣ - View All User Booked Cars");
-            System.out.println("3\uFE0F⃣ - View All Bookings");
-            System.out.println("4\uFE0F⃣ - View Available Cars");
-            System.out.println("5\uFE0F⃣ - View Available Electric Cars");
-            System.out.println("6\uFE0F⃣ - View all users");
-            System.out.println("7\uFE0F⃣ - Exit");
+        while (!flag) {
+//            User tempUser = null;
+//            Car tempCar = null;
 
             try {
+                welcomeMessage();
                 choice = Integer.parseInt(scanner.nextLine());
-                if (choice < 1 || choice > 7){
+                if (choice < 1 || choice > 8) {
                     throw new Exception();
                 }
 
-                switch (choice){
+                switch (choice) {
                     case 1:
-                        //System.out.println("Book car");
-                        System.out.println("Which user is booking a vehicle? ");
-                        userService.getUserList();
-                        tempUser = userService.getUser(scanner.nextLine());
-
-                        System.out.println("Which vehicle would user like to rent? ");
-                        carService.getCarList();
-                        tempCar = carService.getCar(scanner.nextLine());
-                        //tempCar points to the same object that lives inside the carList
-
-                        UUID bookingId = UUID.randomUUID();
-                        Booking temp = new Booking(
-                                bookingId,
-                                tempUser,
-                                tempCar,
-                                LocalDateTime.now()
-                                );
-
-                        if (bookingService.canAddBooking()){
-                            bookingService.addBooking(temp);
-                            tempCar.setBooked(true);
-                            System.out.println("✅ Booking is created successfully!");
-                            System.out.println("Booking id: " + bookingId);
-                        }
-                        else {
-                            System.out.println("All bookings full! ");
-                        }
-
-
+                        bookCar(userService, carService, bookingService, scanner);
                         break;
 
                     case 2:
-                        //System.out.println("View All User Booked Cars");
-                        System.out.println("Pick a user to inspect below: ");
-                        userService.getUserList();
-                        tempUser = userService.getUser(scanner.nextLine());
-                        //User tempUser = userService.getUser(scanner.nextLine());
-
-                        bookingService.findBookingByUserId(tempUser.getUserIdString());
-                        //System.out.println(tempUser.toString());
+                        viewUserBookedCars(userService, bookingService, scanner);
                         break;
 
                     case 3:
-                        //TODO: View All Bookings
-                        bookingService.getBookings();
+                        System.out.println("Here is the list of current bookings in the system: ");
+                        viewAllBookings(bookingService);
                         break;
 
                     case 4:
-                        //TODO: View Available cars
-                        //System.out.println("View Available cars");
-                        carService.getCarList();
+                        //carService.getAvailableCars();
+                        //TODO: Delete Bookings
+                        System.out.println("Which booking would you like to delete? ");
+                        int result = viewAllBookings(bookingService);
+                        if (result > 0){deleteBookings(bookingService, scanner);}
                         break;
 
                     case 5:
-                        //TODO: View Available Electric Cars
-                        //System.out.println("View Available Electric Cars");
-                        carService.getEvCarList();
+                        carService.getAvailableCars();
                         break;
 
                     case 6:
-                        //TODO: View all users
-                        //System.out.println("View all users");
-                        //for (User u : userDAO.getUsers()){
-                        for (User u : userService.getUsers()){
-                            System.out.println(u.toString());
-                        }
+                        carService.getAvailableEVcars();
                         break;
 
                     case 7:
+                        viewUsers(userService);
+                        break;
+
+                    case 8:
                         flag = true;
                 }
 
-            }
-            catch (NoSuchElementException e){
+            } catch (NoSuchElementException e) {
                 System.out.println(e.getMessage());
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("Invalid option ❌ Try again");
             }
 
         }
 
+
     }
+
+    private static void welcomeMessage() {
+        System.out.println("Hi! Welcome to your car booking app. ");
+        System.out.println("Please select one of the options to get started: ");
+        System.out.println("1️⃣ - Book Car");
+        System.out.println("2️⃣ - View All User Booked Cars");
+        System.out.println("3️⃣ - View All Bookings");
+        System.out.println("4️⃣ - Delete Bookings");
+        System.out.println("5️⃣ - View Available Cars");
+        System.out.println("6️⃣ - View Available Electric Cars");
+        System.out.println("7️⃣ - View all users");
+        System.out.println("8️⃣ - Exit");
+    }
+
+    private static void bookCar(UserService userService, CarService carService, BookingService bookingService, Scanner scanner) {
+        //System.out.println("Book car");
+        System.out.println("Which user is booking a vehicle? ");
+
+        for (User u : userService.getUsers()) {
+            System.out.println(u);
+        }
+
+        //null or incorrect user input addressed
+        User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
+
+        //carService.getCarList();
+        System.out.println("Which vehicle would user like to rent? ");
+
+        //null or incorrect user input addressed
+        carService.getAvailableCars();
+        //null or incorrect user input addressed
+        //tempCar points to the same object that lives inside the carList
+        Car tempCar = carService.getCar(UUID.fromString(scanner.nextLine()));
+
+        Booking newBooking = new Booking(
+                tempUser,
+                tempCar
+        );
+        bookingService.addBooking(newBooking);
+
+    }
+
+    private static void viewUserBookedCars(UserService userService, BookingService bookingService, Scanner scanner) {
+
+        if (bookingService.getNumOfBookings() == 0) {
+            System.out.println("❌ No bookings found");
+        } else {
+            System.out.println("Pick a user to inspect below: ");
+
+            for (User u : userService.getUsers()) {
+                System.out.println(u);
+            }
+
+            User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
+            //User tempUser = userService.getUser(scanner.nextLine());
+
+            Booking[] list = bookingService.findBookingByUserId(tempUser.getUserID());
+        }
+
+    }
+
+    private static int viewAllBookings(BookingService bookingService) {
+        if (bookingService.getNumOfBookings() == 0) {
+            System.out.println("❌ No bookings found");
+            return 0;
+        } else {
+            for (Booking b : bookingService.getBookings()) {
+                if (b == null){
+                    continue;
+                }
+                System.out.println(b);
+            }
+        }
+        return 1;
+    }
+
+    private static void deleteBookings(BookingService bookingService, Scanner scanner){
+       boolean isSuccessful =  bookingService.deleteBooking(UUID.fromString(scanner.nextLine()));
+    }
+
+    private static void viewUsers(UserService userService){
+        for (User u : userService.getUsers()) {
+            System.out.println(u.toString());
+        }
+    }
+
+
+
 }

@@ -8,58 +8,59 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Booking {
-    private UUID bookingId;
-    //private UUID bookingUserId;
-    private User bookingUser;
-    private Car carBooked;
-    private LocalDateTime bookingTime;
+    private UUID id;
+    //private UUID userId;
+    private User user;
+    private Car car;
+    private LocalDateTime time;
 
-    public Booking(UUID bookingId, User bookingUser, Car carBooked, LocalDateTime bookingTime) {
-        this.bookingId = bookingId;
-        this.bookingUser = bookingUser;
-        this.carBooked = carBooked;
-        this.bookingTime = bookingTime;
+
+    public Booking(User user, Car car) {
+        this.id = UUID.randomUUID();
+        this.user = user;
+        this.car = car;
+        this.time = LocalDateTime.now();
     }
 
-    public UUID getBookingId() {
-        return bookingId;
+    public UUID getId() {
+        return id;
     }
 
-    public void setBookingId(UUID bookingId) {
-        this.bookingId = bookingId;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public User getBookingUser() {
-        return bookingUser;
+    public User getUser() {
+        return user;
     }
 
-    public void setBookingUser(User bookingUser) {
-        this.bookingUser = bookingUser;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Car getCarBooked() {
-        return carBooked;
+    public Car getCar() {
+        return car;
     }
 
-    public void setCarBooked(Car carBooked) {
-        this.carBooked = carBooked;
+    public void setCar(Car car) {
+        this.car = car;
     }
 
-    public LocalDateTime getBookingTime() {
-        return bookingTime;
+    public LocalDateTime gettime() {
+        return time;
     }
 
-    public void setBookingTime(LocalDateTime bookingTime) {
-        this.bookingTime = bookingTime;
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 
     @Override
     public String toString() {
-        return "Booking{" +
-                "bookingId=" + bookingId +
-                ", bookingUser=" + bookingUser +
-                ", carBooked=" + carBooked +
-                ", bookingTime=" + bookingTime +
+        return "Booking{"       + " \n" +
+                " id=" + id     + ", \n" +
+                " user=" + user + ", \n" +
+                " car=" + car   + ", \n" +
+                " time=" + time + ", \n" +
                 '}';
     }
 
@@ -67,11 +68,11 @@ public class Booking {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return Objects.equals(bookingId, booking.bookingId) && Objects.equals(bookingUser, booking.bookingUser) && Objects.equals(carBooked, booking.carBooked) && Objects.equals(bookingTime, booking.bookingTime);
+        return Objects.equals(id, booking.id) && Objects.equals(user, booking.user) && Objects.equals(car, booking.car) && Objects.equals(time, booking.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bookingId, bookingUser, carBooked, bookingTime);
+        return Objects.hash(id, user, car, time);
     }
 }

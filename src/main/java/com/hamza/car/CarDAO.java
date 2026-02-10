@@ -21,9 +21,9 @@ public class CarDAO {
         return carList;
     }
 
-    public Optional<Car> findCarById(String id){
+    public Optional<Car> findCarById(UUID id){
         for (Car c : carList){
-            if (c.getCarIdString().equals(id)){
+            if (c.getId().equals(id)){
                 return Optional.of(c);
             }
         }
