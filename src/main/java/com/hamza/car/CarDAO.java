@@ -1,6 +1,7 @@
 package com.hamza.car;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +20,67 @@ public class CarDAO {
 
     public Car[] getCars(){
         return carList;
+    }
+
+    public void printCars(Car[] list){
+        for (Car c : list){
+            System.out.println(c);
+        }
+    }
+
+    public Car[] getAvailableCars(int option){
+        int count = 0;
+        Car[] carList = getCars();
+        Car[] availableCarList = new Car[getCars().length];
+
+        if (carList[0] == null){
+            System.out.println("❌ No cars found");
+            return new Car[0];
+        }
+        else {
+            for (int ptr = 0; ptr < carList.length; ptr++){
+                Car c = carList[ptr];
+
+                if (option == 0){
+                    if (!c.getBooked()){
+                        availableCarList[count] = c;
+                        count++;
+                    }
+                }
+
+                else if (option == 1){
+                    if (!c.getBooked() && c.getType().equals(CarType.EV)){
+                        availableCarList[count] = c;
+                        count++;
+                    }
+                }
+            }
+        }
+        availableCarList = Arrays.copyOf(availableCarList, count);
+        return availableCarList;
+    }
+
+    public Car[] getAvailableEvCars(){
+        int count = 0;
+        Car[] carList = getCars();
+        Car[] availableCarList = new Car[getCars().length];
+
+        if (carList[0] == null){
+            System.out.println("❌ No cars found");
+            return new Car[0];
+        }
+        else {
+            for (int ptr = 0; ptr < carList.length; ptr++){
+                Car c = carList[ptr];
+
+                if (!c.getBooked() && c.getType().equals(CarType.EV)){
+                    availableCarList[count] = c;
+                    count++;
+                }
+            }
+        }
+        availableCarList = Arrays.copyOf(availableCarList, count);
+        return availableCarList;
     }
 
     public Optional<Car> findCarById(UUID id){

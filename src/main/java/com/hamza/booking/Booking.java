@@ -3,23 +3,37 @@ package com.hamza.booking;
 import com.hamza.car.Car;
 import com.hamza.user.User;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Booking {
+
+    private final BookingService bookingService = new BookingService();
+
     private UUID id;
-    //private UUID userId;
     private User user;
+    LocalDate startDate;
+    LocalDate endDate;
+    BigDecimal price;
     private Car car;
     private LocalDateTime time;
 
 
-    public Booking(User user, Car car) {
-        this.id = UUID.randomUUID();
+    public Booking(User user, Car car, LocalDate startDate, LocalDate endDate) {
+        this.id = bookingService.generateUserId();
         this.user = user;
         this.car = car;
-        this.time = LocalDateTime.now();
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.price = bookingService.calculatePrice(
+                this.startDate,
+                this.endDate,
+                this.car.getRentalRate()
+        );
+        this.time = bookingService.returnBookingTime();
     }
 
     public UUID getId() {
@@ -38,6 +52,30 @@ public class Booking {
         this.user = user;
     }
 
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
     public Car getCar() {
         return car;
     }
@@ -46,7 +84,7 @@ public class Booking {
         this.car = car;
     }
 
-    public LocalDateTime gettime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
@@ -56,11 +94,14 @@ public class Booking {
 
     @Override
     public String toString() {
-        return "Booking{"       + " \n" +
-                " id=" + id     + ", \n" +
-                " user=" + user + ", \n" +
-                " car=" + car   + ", \n" +
-                " time=" + time + ", \n" +
+        return "Booking{" +
+                "id=" + id +
+                ", user=" + user +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", price=" + price +
+                ", car=" + car +
+                ", time=" + time +
                 '}';
     }
 
@@ -68,11 +109,12 @@ public class Booking {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return Objects.equals(id, booking.id) && Objects.equals(user, booking.user) && Objects.equals(car, booking.car) && Objects.equals(time, booking.time);
+        return Objects.equals(id, booking.id) && Objects.equals(user, booking.user) && Objects.equals(startDate, booking.startDate) && Objects.equals(endDate, booking.endDate) && Objects.equals(price, booking.price) && Objects.equals(car, booking.car) && Objects.equals(time, booking.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, car, time);
+        return Objects.hash(id, user, startDate, endDate, price, car, time);
     }
+
 }

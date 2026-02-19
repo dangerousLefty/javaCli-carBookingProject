@@ -74,7 +74,12 @@ public class Car {
         if (object == null || getClass() != object.getClass()) return false;
         if (!super.equals(object)) return false;
         Car car = (Car) object;
-        return isBooked == car.isBooked && java.util.Objects.equals(id, car.id) && java.util.Objects.equals(make, car.make) && java.util.Objects.equals(type, car.type) && java.util.Objects.equals(rentalRate, car.rentalRate);
+        return
+                isBooked == car.isBooked &&
+                        Objects.equals(id, car.id) &&
+                        Objects.equals(make, car.make) &&
+                        Objects.equals(type, car.type) &&
+                        Objects.equals(rentalRate, car.rentalRate);
     }
 
     public int hashCode() {

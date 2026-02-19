@@ -13,8 +13,12 @@ import com.hamza.car.CarType;
 import com.hamza.user.User;
 import com.hamza.user.UserDAO;
 import com.hamza.user.UserService;
+import com.hamza.util.DateInput;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -27,28 +31,25 @@ public class Main {
         UserService userService = new UserService();
         CarService carService = new CarService();
         BookingService bookingService = new BookingService();
+        DateInput dateInput = new DateInput();
 
 
         Scanner scanner = new Scanner(System.in);
         int choice = 0;
-//        for (int i = 0; i < 11; i++){
-//            System.out.println(UUID.randomUUID().toString());
-//        }
         boolean flag = false;
         while (!flag) {
-//            User tempUser = null;
-//            Car tempCar = null;
+
 
             try {
                 welcomeMessage();
                 choice = Integer.parseInt(scanner.nextLine());
                 if (choice < 1 || choice > 8) {
-                    throw new Exception();
+                    throw new Exception("Invalid option ❌ Try again");
                 }
 
                 switch (choice) {
                     case 1:
-                        bookCar(userService, carService, bookingService, scanner);
+                        bookCar(userService, carService, bookingService, dateInput ,scanner);
                         break;
 
                     case 2:
@@ -56,24 +57,22 @@ public class Main {
                         break;
 
                     case 3:
-                        System.out.println("Here is the list of current bookings in the system: ");
                         viewAllBookings(bookingService);
                         break;
 
                     case 4:
-                        //carService.getAvailableCars();
-                        //TODO: Delete Bookings
-                        System.out.println("Which booking would you like to delete? ");
-                        int result = viewAllBookings(bookingService);
-                        if (result > 0){deleteBookings(bookingService, scanner);}
+                        viewAllBookings(bookingService);
+                        if (bookingService.getNumOfBookings() > 0){
+                            deleteBookings(bookingService, scanner);
+                        }
                         break;
 
                     case 5:
-                        carService.getAvailableCars();
+                        viewAllCars(carService, 0);
                         break;
 
                     case 6:
-                        carService.getAvailableEVcars();
+                        viewAllCars(carService, 1);
                         break;
 
                     case 7:
@@ -87,7 +86,7 @@ public class Main {
             } catch (NoSuchElementException e) {
                 System.out.println(e.getMessage());
             } catch (Exception e) {
-                System.out.println("Invalid option ❌ Try again");
+                System.out.println(e.getMessage());
             }
 
         }
@@ -108,69 +107,79 @@ public class Main {
         System.out.println("8️⃣ - Exit");
     }
 
-    private static void bookCar(UserService userService, CarService carService, BookingService bookingService, Scanner scanner) {
-        //System.out.println("Book car");
+    private static void bookCar(UserService userService, CarService carService, BookingService bookingService, DateInput dateInput, Scanner scanner) throws Exception {
+        LocalDate startDate = null;
+        LocalDate endDate = null;
         System.out.println("Which user is booking a vehicle? ");
 
-        for (User u : userService.getUsers()) {
-            System.out.println(u);
-        }
-
+//        for (User u : userService.getUsers()) {
+//            System.out.println(u);
+//        }
+        viewUsers(userService);
         //null or incorrect user input addressed
         User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
 
-        //carService.getCarList();
         System.out.println("Which vehicle would user like to rent? ");
 
-        //null or incorrect user input addressed
-        carService.getAvailableCars();
+
+        Car[] list =  carService.getAvailableCars(0);
+        carService.printCars(list);
         //null or incorrect user input addressed
         //tempCar points to the same object that lives inside the carList
         Car tempCar = carService.getCar(UUID.fromString(scanner.nextLine()));
 
+        System.out.println("What is the start date for your reservation? (mm dd yyyy)");
+
+        try {
+            startDate = dateInput.parseDateFromInput(scanner.nextLine());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        System.out.println("What is the end date for your reservation? (mm dd yyyy)");
+
+        try {
+            endDate = dateInput.parseDateFromInput(scanner.nextLine());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        if (!dateInput.isStartDateBeforeEndDate(startDate, endDate)){
+            throw new Exception("Start date must be before End date!");
+        }
+
+        //BigDecimal finalPrice = bookingService.calculatePrice(startDate, endDate, tempCar.getRentalRate());
+
         Booking newBooking = new Booking(
                 tempUser,
-                tempCar
+                tempCar,
+                startDate,
+                endDate
         );
         bookingService.addBooking(newBooking);
 
     }
 
     private static void viewUserBookedCars(UserService userService, BookingService bookingService, Scanner scanner) {
-
-        if (bookingService.getNumOfBookings() == 0) {
-            System.out.println("❌ No bookings found");
-        } else {
-            System.out.println("Pick a user to inspect below: ");
-
-            for (User u : userService.getUsers()) {
-                System.out.println(u);
-            }
-
-            User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
-            //User tempUser = userService.getUser(scanner.nextLine());
-
-            Booking[] list = bookingService.findBookingByUserId(tempUser.getUserID());
-        }
+        System.out.println("Which user's bookings would you like to view?");
+        viewUsers(userService);
+        User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
+        Booking[] list = bookingService.getUserBookings(tempUser.getUserID());
 
     }
 
-    private static int viewAllBookings(BookingService bookingService) {
-        if (bookingService.getNumOfBookings() == 0) {
-            System.out.println("❌ No bookings found");
-            return 0;
-        } else {
-            for (Booking b : bookingService.getBookings()) {
-                if (b == null){
-                    continue;
-                }
-                System.out.println(b);
-            }
-        }
-        return 1;
+    private static void viewAllCars(CarService carService, int i){
+        carService.printCars(carService.getAvailableCars(i));
+    }
+
+    private static void viewAllBookings(BookingService bookingService) {
+        bookingService.getBookings();
     }
 
     private static void deleteBookings(BookingService bookingService, Scanner scanner){
+        System.out.println("Which booking would you like to delete? ");
        boolean isSuccessful =  bookingService.deleteBooking(UUID.fromString(scanner.nextLine()));
     }
 
@@ -179,7 +188,6 @@ public class Main {
             System.out.println(u.toString());
         }
     }
-
 
 
 }

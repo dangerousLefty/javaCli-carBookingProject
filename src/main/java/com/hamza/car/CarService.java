@@ -17,19 +17,15 @@ public class CarService {
         return carDAO.getCars();
     }
 
-    public void getAvailableCars(){
-        for (Car c : getCars()){
-            if (!c.getBooked()){
-                System.out.println(c);
-            }
-        }
+    public Car[] getAvailableCars(int i){
+        return carDAO.getAvailableCars(i);
     }
 
-    public void getAvailableEVcars(){
-        for (Car c : getCars()){
-            if (!c.getBooked() && c.getType().equals(CarType.EV)){
-                System.out.println(c);
-            }
-        }
+    public Car[] getAvailableEvCars(){
+        return carDAO.getAvailableEvCars();
+    }
+
+    public void printCars(Car[] list){
+        carDAO.printCars(list);
     }
 }
