@@ -62,19 +62,16 @@ public class BookingDAO {
         }
 
         Booking[] bookingList = getBookings();
-        for (int i = 0; i <= bookingList.length; i++){
+        for (int i = 0; i < bookingList.length; i++){
 
             if (bookingList[i] == null){
                 bookings[i] = booking;
                 break;
             }
         }
-        System.out.println("✅ Booking is created successfully!");
-        System.out.println("Booking id: " + booking.getId().toString());
         numOfBookings++;
         return true;
     }
-
 
 
     public Booking[] getUserBookings(UUID id){
@@ -82,32 +79,21 @@ public class BookingDAO {
         Booking[] bookingList = getBookings();
         Booking[] returnList = new Booking[getMaxBookings()];
 
-        if (bookingList[0] == null){
-            System.out.println("❌ No bookings found");
-            return new Booking[0];
-        }
-
-        else {
             for (int ptr = 0; ptr < getNumOfBookings(); ptr++){
-                Booking b = bookingList[ptr];
-                if (b.equals(null)){
+                //Booking b = bookingList[ptr];
+
+                if (bookingList[ptr] == null){
                     continue;
                 }
 
-                else if (b.getUser().getUserID().equals(id)){
-                    returnList[count] = b;
+                else if (bookingList[ptr].getUser().getUserID().equals(id)){
+                    returnList[count] = bookingList[ptr];
                     count++;
                 }
             }
-            if (count == 0){
-                System.out.println("❌ No bookings made with this user");
-                returnList = new Booking[0];
-            }
-            else {
-                returnList = Arrays.copyOf(returnList, count);
-            }
 
-        }
+                returnList = Arrays.copyOf(returnList, count);
+
         return returnList;
     }
 
@@ -118,12 +104,10 @@ public class BookingDAO {
                 //BookingDAO.decrementBookings();
                 decrementBookings();
                 bookingList[i].getCar().setBooked(false);
-                System.out.println("✅ Booking deleted successfully");
                 bookingList[i] = null;
                 return true;
             }
         }
-        System.out.println("❌ Booking does not exist");
         return false;
     }
 

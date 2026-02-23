@@ -11,29 +11,25 @@ import java.util.UUID;
 
 public class Booking {
 
-    private final BookingService bookingService = new BookingService();
+    //private final BookingService bookingService = new BookingService();
 
     private UUID id;
     private User user;
-    LocalDate startDate;
-    LocalDate endDate;
-    BigDecimal price;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private BigDecimal price;
     private Car car;
     private LocalDateTime time;
 
 
-    public Booking(User user, Car car, LocalDate startDate, LocalDate endDate) {
-        this.id = bookingService.generateUserId();
+    public Booking(User user, Car car, LocalDate startDate, LocalDate endDate, BigDecimal price) {
+        this.id = UUID.randomUUID();
         this.user = user;
         this.car = car;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.price = bookingService.calculatePrice(
-                this.startDate,
-                this.endDate,
-                this.car.getRentalRate()
-        );
-        this.time = bookingService.returnBookingTime();
+        this.price = price;
+        this.time = LocalDateTime.now();
     }
 
     public UUID getId() {
@@ -109,7 +105,14 @@ public class Booking {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return Objects.equals(id, booking.id) && Objects.equals(user, booking.user) && Objects.equals(startDate, booking.startDate) && Objects.equals(endDate, booking.endDate) && Objects.equals(price, booking.price) && Objects.equals(car, booking.car) && Objects.equals(time, booking.time);
+        return
+                Objects.equals(id, booking.id) &&
+                        Objects.equals(user, booking.user) &&
+                        Objects.equals(startDate, booking.startDate) &&
+                        Objects.equals(endDate, booking.endDate) &&
+                        Objects.equals(price, booking.price) &&
+                        Objects.equals(car, booking.car) &&
+                        Objects.equals(time, booking.time);
     }
 
     @Override

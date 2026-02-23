@@ -17,12 +17,12 @@ public class CarService {
         return carDAO.getCars();
     }
 
-    public Car[] getAvailableCars(int i){
-        return carDAO.getAvailableCars(i);
+    public Car[] getAvailableCars(){
+        return carDAO.getAvailableCars();
     }
 
-    public Car[] getAvailableEvCars(){
-        return carDAO.getAvailableEvCars();
+    public Car[] getAvailableCarsByType(CarType type){
+        return carDAO.getAvailableCarByType(type);
     }
 
     public void printCars(Car[] list){

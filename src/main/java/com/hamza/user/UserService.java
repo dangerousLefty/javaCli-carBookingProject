@@ -18,10 +18,4 @@ public class UserService {
         return userDAO.getUsers();
     }
 
-    /*
-    public void getUserList(){
-        for (User u : getUsers()){
-            System.out.println(u.toString());
-        }
-    } */
 }

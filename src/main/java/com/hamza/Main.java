@@ -68,11 +68,11 @@ public class Main {
                         break;
 
                     case 5:
-                        viewAllCars(carService, 0);
+                        viewAllCars(carService);
                         break;
 
                     case 6:
-                        viewAllCars(carService, 1);
+                        viewCarsByType(carService, CarType.EV);
                         break;
 
                     case 7:
@@ -90,7 +90,6 @@ public class Main {
             }
 
         }
-
 
     }
 
@@ -112,17 +111,13 @@ public class Main {
         LocalDate endDate = null;
         System.out.println("Which user is booking a vehicle? ");
 
-//        for (User u : userService.getUsers()) {
-//            System.out.println(u);
-//        }
         viewUsers(userService);
         //null or incorrect user input addressed
         User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
-
         System.out.println("Which vehicle would user like to rent? ");
 
 
-        Car[] list =  carService.getAvailableCars(0);
+        Car[] list =  carService.getAvailableCars();
         carService.printCars(list);
         //null or incorrect user input addressed
         //tempCar points to the same object that lives inside the carList
@@ -150,37 +145,81 @@ public class Main {
             throw new Exception("Start date must be before End date!");
         }
 
-        //BigDecimal finalPrice = bookingService.calculatePrice(startDate, endDate, tempCar.getRentalRate());
+        BigDecimal finalPrice = bookingService.calculatePrice(startDate, endDate, tempCar.getRentalRate());
 
         Booking newBooking = new Booking(
                 tempUser,
                 tempCar,
                 startDate,
-                endDate
+                endDate,
+                finalPrice
         );
-        bookingService.addBooking(newBooking);
+        boolean result = bookingService.addBooking(newBooking);
+        if (result){
+            System.out.println("✅ Booking is created successfully!");
+            System.out.println("Booking id: " + newBooking.getId().toString());
+        }
 
     }
 
     private static void viewUserBookedCars(UserService userService, BookingService bookingService, Scanner scanner) {
+        if (bookingService.getNumOfBookings() == 0){
+            System.out.println("❌ No bookings found!");
+            return;
+        }
+
         System.out.println("Which user's bookings would you like to view?");
         viewUsers(userService);
         User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
-        Booking[] list = bookingService.getUserBookings(tempUser.getUserID());
-
-    }
-
-    private static void viewAllCars(CarService carService, int i){
-        carService.printCars(carService.getAvailableCars(i));
+        Booking[] bookingList = bookingService.getUserBookings(tempUser.getUserID());
+        if (bookingList.length > 0){
+            System.out.println("Here are the list of Bookings in the system");
+            System.out.println("-------------------------------------------");
+        }
+        else {
+            System.out.println("❌ No bookings found!");
+        }
+        bookingService.printBookings(bookingList);
     }
 
     private static void viewAllBookings(BookingService bookingService) {
-        bookingService.getBookings();
+        if (bookingService.getNumOfBookings() == 0){
+            System.out.println("❌ No bookings found!");
+            return;
+        }
+
+        Booking[] bookingList = bookingService.getBookings();
+        System.out.println("Here are the list of Bookings in the system");
+        System.out.println("-------------------------------------------");
+        bookingService.printBookings(bookingList);
+    }
+
+    private static void viewAllCars(CarService carService){
+        System.out.println("Here are the available cars that i found");
+        Car[] carList = carService.getAvailableCars();
+        carService.printCars(carList);
+    }
+
+    private static void viewCarsByType(CarService carService, CarType type){
+        System.out.println("Here are the " + type + " cars that i found");
+        Car[] carList = carService.getAvailableCarsByType(type);
+        carService.printCars(carList);
     }
 
     private static void deleteBookings(BookingService bookingService, Scanner scanner){
+        if (bookingService.getNumOfBookings() == 0){
+            System.out.println("❌ No bookings found!");
+            return;
+        }
+
         System.out.println("Which booking would you like to delete? ");
        boolean isSuccessful =  bookingService.deleteBooking(UUID.fromString(scanner.nextLine()));
+       if (isSuccessful) {
+           System.out.println("✅ Booking deleted successfully");
+       }
+       else {
+           System.out.println("❌ Booking does not exist");
+       }
     }
 
     private static void viewUsers(UserService userService){
@@ -188,6 +227,5 @@ public class Main {
             System.out.println(u.toString());
         }
     }
-
 
 }

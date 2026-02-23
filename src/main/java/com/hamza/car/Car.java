@@ -59,7 +59,7 @@ public class Car {
         isBooked = booked;
     }
 
-    @java.lang.Override
+    @Override
     public java.lang.String toString() {
         return "Car{" +
                 "id=" + id +
@@ -70,9 +70,10 @@ public class Car {
                 '}';
     }
 
+    @Override
     public boolean equals(Object object) {
         if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
+        //if (!super.equals(object)) return false;
         Car car = (Car) object;
         return
                 isBooked == car.isBooked &&
@@ -82,6 +83,7 @@ public class Car {
                         Objects.equals(rentalRate, car.rentalRate);
     }
 
+    @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, make, type, rentalRate, isBooked);
     }

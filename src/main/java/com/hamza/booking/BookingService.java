@@ -13,13 +13,13 @@ import java.util.UUID;
 public class BookingService {
     private final BookingDAO bookingDAO = new BookingDAO();
 
-    public UUID generateUserId(){
-        return UUID.randomUUID();
-    }
+//    public UUID generateUserId(){
+//        return UUID.randomUUID();
+//    }
 
-    public LocalDateTime returnBookingTime(){
-        return LocalDateTime.now();
-    }
+//    public LocalDateTime returnBookingTime(){
+//        return LocalDateTime.now();
+//    }
 
     public BigDecimal calculatePrice(LocalDate startDate, LocalDate endDate, BigDecimal rentalRate){
         long daysCount = ChronoUnit.DAYS.between(startDate, endDate) + 1;
@@ -39,22 +39,33 @@ public class BookingService {
     }
 
     public Booking[] getUserBookings(UUID id){
-        Booking[] list = bookingDAO.getUserBookings(id);
-        bookingDAO.printBookings(list);
+        //Booking[] list = bookingDAO.getUserBookings(id);
+        Booking[] list = null;
+        if (getNumOfBookings() == 0) {
+            return new Booking[0];
+        }
+
+        list = bookingDAO.getUserBookings(id);
 
         return list;
     }
 
+    public int numOfBookings(){
+        return bookingDAO.getNumOfBookings();
+    }
+
+    public void printBookings(Booking[] list){
+        bookingDAO.printBookings(list);
+    }
+
     public Booking[] getBookings(){
         Booking[] list = null;
-        if (bookingDAO.getNumOfBookings() == 0) {
-            System.out.println("❌ No bookings found");
+        if (getNumOfBookings() == 0) {
             return new Booking[0];
         }
         else {
             list = bookingDAO.getBookings();
         }
-        bookingDAO.printBookings(list);
         return list;
     }
 
