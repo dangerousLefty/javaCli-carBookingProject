@@ -1,110 +1,87 @@
 package com.hamza.booking;
 
+import com.hamza.car.Car;
+
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class BookingDAO {
 
-    //the DAO objects are responsible of retrieving
-    //data from the database. doesn't think about
-    //whether string passed to it is valid or not
-    //since we keep changing the size of the array,
-    // we cant make this variable to be final
     private static Booking[] bookings;
-
-    //booking Array starts with 1,
-    //then increments every time it gets full
-    //this will be the size of the Booking array
-    private static int maxBookings = 1;
-
-    //how many bookings are currently in the Array
-    private static int numOfBookings = 0;
+    private static int maxBookings = 100;
+    private static int currentNumberOfBookings = 0;
 
     static {
         bookings = new Booking[maxBookings];
     }
 
+    //printing not responsibility of the DAO
+
+    //used in bookingService
+    public int getCurrentNumberOfBookings(){
+        return currentNumberOfBookings;
+    }
+
+    //used in bookingService
     public Booking[] getBookings(){
         return bookings;
     }
 
-    public void printBookings(Booking[] list){
-        for (Booking b : list){
-            System.out.println(b);
-        }
-    }
-
-    public int getNumOfBookings(){
-        return numOfBookings;
-    }
-
-    public void decrementBookings(){
-        numOfBookings--;
-    }
-
-    public int getMaxBookings(){
-        return maxBookings;
-    }
-
-    public boolean canAddBooking(){
-        return getNumOfBookings() < getMaxBookings();
-    }
-
-    private void expandArray(){
-        maxBookings *= 2;
-        bookings = Arrays.copyOf(bookings, maxBookings);
-        System.out.println("Expanding storage! Please wait!!");
-    }
-
-    public boolean addBooking(Booking booking){
-        if (!canAddBooking()){
-            expandArray();
+    public boolean addBooking(Booking booking) {
+        if (currentNumberOfBookings >= maxBookings){
+            System.out.println("Expanding storage! Please wait!!");
+            maxBookings *= 2;
+            bookings = Arrays.copyOf(bookings, maxBookings);
         }
 
-        Booking[] bookingList = getBookings();
-        for (int i = 0; i < bookingList.length; i++){
-
-            if (bookingList[i] == null){
+        Booking[] bookingList = bookings;
+        for (int i = 0; i < bookingList.length; i++) {
+            if (bookingList[i] == null) {
                 bookings[i] = booking;
-                break;
+                currentNumberOfBookings++;
+                return true;
             }
         }
-        numOfBookings++;
-        return true;
+        return false;
     }
 
-
-    public Booking[] getUserBookings(UUID id){
-        int count = 0;
-        Booking[] bookingList = getBookings();
-        Booking[] returnList = new Booking[getMaxBookings()];
-
-            for (int ptr = 0; ptr < getNumOfBookings(); ptr++){
-                //Booking b = bookingList[ptr];
-
-                if (bookingList[ptr] == null){
-                    continue;
-                }
-
-                else if (bookingList[ptr].getUser().getUserID().equals(id)){
-                    returnList[count] = bookingList[ptr];
-                    count++;
-                }
+    public Optional<Booking> getBookingById(UUID id){
+        for (Booking b : bookings){
+            //if (c.getId().equals(id) && !c.getBooked()){
+            //if (Objects.equals(b.getId(), id)){
+            //returning error on null Cannot invoke "com.hamza.booking.Booking.getUserId()" because "b" is null
+            if (b != null && b.getId().equals(id)){
+                return Optional.of(b);
             }
+        }
+        return Optional.empty();
+    }
 
-                returnList = Arrays.copyOf(returnList, count);
-
+    public Booking[] getUserBookings(UUID id) {
+        int count = 0;
+        Booking[] bookingList = bookings;
+        Booking[] returnList = new Booking[maxBookings];
+        for (Booking b : bookingList){
+            //if (Objects.equals(b.getUserId(), id)){
+            //returning error on null Cannot invoke "com.hamza.booking.Booking.getUserId()" because "b" is null
+            if (b != null && b.getUserId().equals(id)){
+                returnList[count] = b;
+                count++;
+            }
+        }
+        returnList = Arrays.copyOf(returnList, count);
         return returnList;
     }
 
-    public boolean deleteBooking(UUID id){
-        Booking[] bookingList = getBookings();
-        for (int i = 0; i < bookingList.length; i++){
-            if (bookingList[i] != null && bookingList[i].getId().equals(id)){
-                //BookingDAO.decrementBookings();
-                decrementBookings();
-                bookingList[i].getCar().setBooked(false);
+    public boolean deleteBooking(UUID id) {
+
+        Booking[] bookingList = bookings;
+        for (int i = 0; i < bookingList.length; i++) {
+            if (bookingList[i] != null && bookingList[i].getId().equals(id)) {
                 bookingList[i] = null;
+                currentNumberOfBookings--;
                 return true;
             }
         }

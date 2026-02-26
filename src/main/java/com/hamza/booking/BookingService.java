@@ -3,15 +3,19 @@ package com.hamza.booking;
 import com.hamza.car.Car;
 import com.hamza.car.CarService;
 import com.hamza.user.User;
+import com.hamza.user.UserService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class BookingService {
     private final BookingDAO bookingDAO = new BookingDAO();
+    private final UserService userService = new UserService();
+    private final CarService carService = new CarService();
 
 //    public UUID generateUserId(){
 //        return UUID.randomUUID();
@@ -29,38 +33,50 @@ public class BookingService {
         return rentalPrice;
     }
 
-    public boolean addBooking(Booking booking){
-            booking.getCar().setBooked(true);
-            return bookingDAO.addBooking(booking);
+    public Booking getBookingById(UUID id){
+        return bookingDAO.getBookingById(id)
+                .orElseThrow(() -> new NoSuchElementException(
+                        "❌ Booking not found with given id"
+                ));
+    }
+
+    public boolean bookCar(UUID userId, Car car, BigDecimal price, LocalDate from, LocalDate to){
+        //TODO: is 'from' date less than 'to' date? (Taken care of in DateInput class)
+        //TODO: check if user exists (Taken care of in userService)
+        //TODO: check if car exists (Taken care of in carService)
+        //TODO: check if car not being rented (Taken care of in Car DAO)
+        car.setBooked(true);
+        Booking newBooking = new Booking(
+            userId, car.getId(), price, from, to
+        );
+
+        return bookingDAO.addBooking(newBooking);
     }
 
     public boolean deleteBooking(UUID id){
+        //TODO: does the booking exist?
+        Booking b = getBookingById(id);
+        //TODO: find the car associated with the booking and set it status to false
+        Car c = carService.getCar(b.getCarId(), true);
+        c.setBooked(false);
+
         return bookingDAO.deleteBooking(id);
     }
 
     public Booking[] getUserBookings(UUID id){
-        //Booking[] list = bookingDAO.getUserBookings(id);
-        Booking[] list = null;
-        if (getNumOfBookings() == 0) {
-            return new Booking[0];
-        }
-
-        list = bookingDAO.getUserBookings(id);
-
-        return list;
+        //TODO: does the user exist?
+        //in order to implement the check ^, we need to use UserService class
+        User u = userService.getUser(id);
+        return bookingDAO.getUserBookings(id);
     }
 
     public int numOfBookings(){
-        return bookingDAO.getNumOfBookings();
-    }
-
-    public void printBookings(Booking[] list){
-        bookingDAO.printBookings(list);
+        return bookingDAO.getCurrentNumberOfBookings();
     }
 
     public Booking[] getBookings(){
         Booking[] list = null;
-        if (getNumOfBookings() == 0) {
+        if (getCurrentNumberOfBookings() == 0) {
             return new Booking[0];
         }
         else {
@@ -69,8 +85,8 @@ public class BookingService {
         return list;
     }
 
-    public int getNumOfBookings(){
-        return bookingDAO.getNumOfBookings();
+    public int getCurrentNumberOfBookings(){
+        return bookingDAO.getCurrentNumberOfBookings();
     }
 
 }

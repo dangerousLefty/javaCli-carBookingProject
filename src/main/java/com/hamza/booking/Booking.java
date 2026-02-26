@@ -11,25 +11,29 @@ import java.util.UUID;
 
 public class Booking {
 
-    //private final BookingService bookingService = new BookingService();
-
     private UUID id;
-    private User user;
+    private UUID userId;
+    private UUID carId;
+    private BigDecimal price;
     private LocalDate startDate;
     private LocalDate endDate;
-    private BigDecimal price;
-    private Car car;
-    private LocalDateTime time;
+    private LocalDateTime createdAt;
 
 
-    public Booking(User user, Car car, LocalDate startDate, LocalDate endDate, BigDecimal price) {
+    public Booking(
+            UUID userId,
+            UUID carId,
+            BigDecimal price,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
         this.id = UUID.randomUUID();
-        this.user = user;
-        this.car = car;
+        this.userId = userId;
+        this.carId = carId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.price = price;
-        this.time = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 
     public UUID getId() {
@@ -40,12 +44,28 @@ public class Booking {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public UUID getCarId() {
+        return carId;
+    }
+
+    public void setCarId(UUID carId) {
+        this.carId = carId;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public LocalDate getStartDate() {
@@ -64,40 +84,24 @@ public class Booking {
         this.endDate = endDate;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Car getCar() {
-        return car;
-    }
-
-    public void setCar(Car car) {
-        this.car = car;
-    }
-
-    public LocalDateTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalDateTime time) {
-        this.time = time;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
     public String toString() {
         return "Booking{" +
                 "id=" + id +
-                ", user=" + user +
+                ", userId=" + userId +
+                ", carId=" + carId +
+                ", price=" + price +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", price=" + price +
-                ", car=" + car +
-                ", time=" + time +
+                ", createdAt=" + createdAt +
                 '}';
     }
 
@@ -105,19 +109,17 @@ public class Booking {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return
-                Objects.equals(id, booking.id) &&
-                        Objects.equals(user, booking.user) &&
-                        Objects.equals(startDate, booking.startDate) &&
-                        Objects.equals(endDate, booking.endDate) &&
-                        Objects.equals(price, booking.price) &&
-                        Objects.equals(car, booking.car) &&
-                        Objects.equals(time, booking.time);
+        return Objects.equals(id, booking.id) &&
+                Objects.equals(userId, booking.userId) &&
+                Objects.equals(carId, booking.carId) &&
+                Objects.equals(price, booking.price) &&
+                Objects.equals(startDate, booking.startDate) &&
+                Objects.equals(endDate, booking.endDate) &&
+                Objects.equals(createdAt, booking.createdAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, startDate, endDate, price, car, time);
+        return Objects.hash(id, userId, carId, price, startDate, endDate, createdAt);
     }
-
 }
