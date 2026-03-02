@@ -54,10 +54,9 @@ public class BookingService {
     }
 
     public boolean deleteBooking(UUID id){
-        //TODO: does the booking exist?
         Booking b = getBookingById(id);
-        //TODO: find the car associated with the booking and set it status to false
-        Car c = carService.getCar(b.getCarId(), true);
+        Car c = carService.getCar(b.getCarId());
+        //TODO: look into rewriting this fxn ^
         c.setBooked(false);
 
         return bookingDAO.deleteBooking(id);

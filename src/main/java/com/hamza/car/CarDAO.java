@@ -73,9 +73,9 @@ public class CarDAO {
         return availableCarList;
     }
 
-    public Optional<Car> findCarById(UUID id, boolean isBooked){
+    public Optional<Car> findCarById(UUID id){
         for (Car c : carList){
-            if (c.getId().equals(id) && c.getBooked() == isBooked){
+            if (c.getId().equals(id)){
                 return Optional.of(c);
             }
         }

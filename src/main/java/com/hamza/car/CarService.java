@@ -6,8 +6,8 @@ import java.util.UUID;
 public class CarService {
     private final CarDAO carDAO = new CarDAO();
 
-    public Car getCar(UUID id, boolean isBooked){
-        return carDAO.findCarById(id, isBooked)
+    public Car getCar(UUID id){
+        return carDAO.findCarById(id)
                 .orElseThrow(() -> new NoSuchElementException(
                         "❌ Car not found with id ".concat(id.toString())
                 ));

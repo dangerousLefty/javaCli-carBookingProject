@@ -109,7 +109,7 @@ public class Main {
         printList(list);
         //tempCar points to the same object that lives inside the carList
         //null or incorrect car input addressed
-        Car tempCar = carService.getCar(UUID.fromString(scanner.nextLine()), false);
+        Car tempCar = carService.getCar(UUID.fromString(scanner.nextLine()));
 
         System.out.println("What is the start date for your reservation? (mm dd yyyy)");
         LocalDate startDate = DateInput.parseDateFromInput(scanner.nextLine())
