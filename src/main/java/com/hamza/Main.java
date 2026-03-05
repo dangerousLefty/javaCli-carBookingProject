@@ -7,11 +7,11 @@ import com.hamza.car.CarService;
 import com.hamza.car.CarType;
 import com.hamza.user.User;
 import com.hamza.user.UserService;
-import com.hamza.util.DateInput;
 
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Main {
@@ -21,7 +21,6 @@ public class Main {
         UserService userService = new UserService();
         CarService carService = new CarService();
         BookingService bookingService = new BookingService();
-        DateInput dateInput = new DateInput();
 
 
         Scanner scanner = new Scanner(System.in);
@@ -101,35 +100,21 @@ public class Main {
         System.out.println("Which user is booking a vehicle? ");
 
         viewUsers(userService);
-        //null or incorrect user input addressed
-        User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
+        UUID userId = UUID.fromString(scanner.nextLine());
 
         System.out.println("Which vehicle would user like to rent? ");
         Car[] list =  carService.getAvailableCars();
         printList(list);
-        //tempCar points to the same object that lives inside the carList
-        //null or incorrect car input addressed
-        Car tempCar = carService.getCar(UUID.fromString(scanner.nextLine()));
+        UUID carId = UUID.fromString(scanner.nextLine());
 
         System.out.println("What is the start date for your reservation? (mm dd yyyy)");
-        LocalDate startDate = DateInput.parseDateFromInput(scanner.nextLine())
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Please review your input and try again"
-                ));
+        String startDate = scanner.nextLine();
 
         System.out.println("What is the end date for your reservation? (mm dd yyyy)");
-        LocalDate endDate = DateInput.parseDateFromInput(scanner.nextLine())
-                .orElseThrow(() -> new NoSuchElementException(
-                        "Please review your input and try again"
-                ));
+        String endDate = scanner.nextLine();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM dd yyyy");
 
-        if (!DateInput.isStartDateBeforeEndDate(startDate, endDate)){
-            throw new Exception("Start date must be before End date!");
-        }
-
-        BigDecimal finalPrice = bookingService.calculatePrice(startDate, endDate, tempCar.getRentalRate());
-
-        boolean result = bookingService.bookCar(tempUser.getUserID(), tempCar, finalPrice, endDate, endDate);
+        boolean result = bookingService.bookCar(userId, carId, startDate, endDate, formatter);
         if (result){
             System.out.println("✅ Booking is created successfully!");
         }

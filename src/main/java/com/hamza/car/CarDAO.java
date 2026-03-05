@@ -30,47 +30,44 @@ public class CarDAO {
 
     public Car[] getAvailableCars(){
         int count = 0;
-        Car[] carList = getCars();
-        Car[] availableCarList = new Car[getCars().length];
 
-        if (carList[0] == null){
-            System.out.println("❌ No cars found");
-            return new Car[0];
-        }
-        else {
-            for (int ptr = 0; ptr < carList.length; ptr++){
-                Car c = carList[ptr];
-                    if (!c.getBooked()){
-                        availableCarList[count] = c;
-                        count++;
-                    }
+        for (Car c : carList){
+            if (c != null && !c.getBooked()){
+                count++;
             }
         }
-        availableCarList = Arrays.copyOf(availableCarList, count);
-        return availableCarList;
+
+        int unbookedCarCount = 0;
+        Car[] returnList = new Car[count];
+        for (int i = 0; i < carList.length && unbookedCarCount < count; i++){
+            if (carList[i] != null && !carList[i].getBooked()){
+                returnList[unbookedCarCount] = carList[i];
+                unbookedCarCount++;
+            }
+        }
+
+        return returnList;
     }
 
     public Car[] getAvailableCarByType(CarType type){
         int count = 0;
-        Car[] carList = getCars();
-        Car[] availableCarList = new Car[getCars().length];
 
-        if (carList[0] == null){
-            System.out.println("❌ No cars found");
-            return new Car[0];
-        }
-        else {
-            for (int ptr = 0; ptr < carList.length; ptr++){
-                Car c = carList[ptr];
-
-                if (!c.getBooked() && c.getType().equals(type)){
-                    availableCarList[count] = c;
-                    count++;
-                }
+        for (Car c : carList){
+            if (c != null && !c.getBooked() && c.getType().equals(type)){
+                count++;
             }
         }
-        availableCarList = Arrays.copyOf(availableCarList, count);
-        return availableCarList;
+
+        int availableCarCount = 0;
+        Car[] returnList = new Car[count];
+        for (int i = 0; i < carList.length && availableCarCount < count; i++){
+            if (carList[i] != null && !carList[i].getBooked() && carList[i].getType().equals(type)){
+                returnList[availableCarCount] = carList[i];
+                availableCarCount++;
+            }
+        }
+
+        return returnList;
     }
 
     public Optional<Car> findCarById(UUID id){

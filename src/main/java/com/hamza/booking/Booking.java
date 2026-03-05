@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Booking {
+    private final BookingService bookingService = new BookingService();
 
     private UUID id;
     private UUID userId;
@@ -27,13 +28,13 @@ public class Booking {
             LocalDate startDate,
             LocalDate endDate
     ) {
-        this.id = UUID.randomUUID();
+        this.id = bookingService.generateUserId();
         this.userId = userId;
         this.carId = carId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.price = price;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = bookingService.returnBookingTime();
     }
 
     public UUID getId() {

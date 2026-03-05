@@ -17,9 +17,6 @@ public class BookingDAO {
         bookings = new Booking[maxBookings];
     }
 
-    //printing not responsibility of the DAO
-
-    //used in bookingService
     public int getCurrentNumberOfBookings(){
         return currentNumberOfBookings;
     }
@@ -36,9 +33,8 @@ public class BookingDAO {
             bookings = Arrays.copyOf(bookings, maxBookings);
         }
 
-        Booking[] bookingList = bookings;
-        for (int i = 0; i < bookingList.length; i++) {
-            if (bookingList[i] == null) {
+        for (int i = 0; i < bookings.length; i++) {
+            if (bookings[i] == null) {
                 bookings[i] = booking;
                 currentNumberOfBookings++;
                 return true;
@@ -49,9 +45,6 @@ public class BookingDAO {
 
     public Optional<Booking> getBookingById(UUID id){
         for (Booking b : bookings){
-            //if (c.getId().equals(id) && !c.getBooked()){
-            //if (Objects.equals(b.getId(), id)){
-            //returning error on null Cannot invoke "com.hamza.booking.Booking.getUserId()" because "b" is null
             if (b != null && b.getId().equals(id)){
                 return Optional.of(b);
             }
@@ -61,17 +54,20 @@ public class BookingDAO {
 
     public Booking[] getUserBookings(UUID id) {
         int count = 0;
-        Booking[] bookingList = bookings;
-        Booking[] returnList = new Booking[maxBookings];
-        for (Booking b : bookingList){
-            //if (Objects.equals(b.getUserId(), id)){
-            //returning error on null Cannot invoke "com.hamza.booking.Booking.getUserId()" because "b" is null
+        for (Booking b : bookings){
             if (b != null && b.getUserId().equals(id)){
-                returnList[count] = b;
                 count++;
             }
         }
-        returnList = Arrays.copyOf(returnList, count);
+
+        Booking[] returnList = new Booking[count];
+        int booking = 0;
+        for (int i = 0; i < bookings.length && booking < count; i++){
+            if (bookings[i] != null && bookings[i].getUserId().equals(id)){
+                returnList[booking] = bookings[i];
+                booking++;
+            }
+        }
         return returnList;
     }
 
