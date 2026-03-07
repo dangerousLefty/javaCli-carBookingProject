@@ -19,15 +19,7 @@ public class BookingService {
     private final UserService userService = new UserService();
     private final CarService carService = new CarService();
 
-    public UUID generateUserId(){
-        return UUID.randomUUID();
-    }
-
-    public LocalDateTime returnBookingTime(){
-        return LocalDateTime.now();
-    }
-
-    public BigDecimal calculatePrice(LocalDate startDate, LocalDate endDate, BigDecimal rentalRate){
+    private BigDecimal calculatePrice(LocalDateTime startDate, LocalDateTime endDate, BigDecimal rentalRate){
         long daysCount = ChronoUnit.DAYS.between(startDate, endDate) + 1;
         //we do +1 because we calculate the days inclusive of start & end date
         BigDecimal rentalPrice = new BigDecimal(daysCount).multiply(rentalRate);
@@ -42,30 +34,35 @@ public class BookingService {
                 ));
     }
 
-    public boolean bookCar(UUID userId, UUID carId, String startDateString, String endDateString, DateTimeFormatter formatter) throws Exception {
+    public boolean bookCar(UUID userId, UUID carId, LocalDateTime startDate, LocalDateTime endDate, DateTimeFormatter formatter) throws Exception {
 
-        LocalDate startDate = null;
-        LocalDate endDate = null;
         User tempUser = userService.getUser(userId);
         Car tempCar = carService.getCar(carId);
         if (tempCar.getBooked()){
             throw new Exception("❌ Car is already rented out");
         }
-        try {
-            startDate = LocalDate.parse(startDateString, formatter);
-            endDate = LocalDate.parse(endDateString, formatter);
-        } catch (DateTimeParseException e) {
-            throw e;
-        }
+
         if (startDate.isAfter(endDate)){
             throw new Exception("❌ Start date cannot be after End Date");
+        }
+
+        if (endDate.isBefore(startDate)){
+            throw new Exception("❌ End date cannot be before Start Date");
         }
         BigDecimal finalPrice = calculatePrice(
                 startDate, endDate, tempCar.getRentalRate()
         );
         tempCar.setBooked(true);
+        UUID bookingId = UUID.randomUUID();
+        LocalDateTime bookingTime = LocalDateTime.now();
         Booking newBooking = new Booking(
-                userId, tempCar.getId(), finalPrice, startDate, endDate
+                bookingId,
+                userId,
+                tempCar.getId(),
+                finalPrice,
+                startDate,
+                endDate,
+                bookingTime
         );
 
         return bookingDAO.addBooking(newBooking);
@@ -86,10 +83,7 @@ public class BookingService {
     }
 
     public Booking[] getBookings(){
-        Booking[] list = null;
-        list = bookingDAO.getBookings();
-
-        return list;
+        return bookingDAO.getBookings();
     }
 
     public int getCurrentNumberOfBookings(){

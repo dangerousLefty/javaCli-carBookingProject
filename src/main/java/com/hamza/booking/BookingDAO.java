@@ -1,9 +1,6 @@
 package com.hamza.booking;
 
-import com.hamza.car.Car;
-
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,7 +20,23 @@ public class BookingDAO {
 
     //used in bookingService
     public Booking[] getBookings(){
-        return bookings;
+        int count = 0;
+        for (int i = 0; i < bookings.length; i++){
+            if (bookings[i] != null){
+                count++;
+            }
+        }
+        Booking[] returnList = new Booking[count];
+
+        int insertCount = 0;
+        for (int i = 0; i < bookings.length && insertCount < count; i++){
+            if (bookings[i] != null){
+                returnList[insertCount] = bookings[i];
+                insertCount++;
+            }
+        }
+
+        return returnList;
     }
 
     public boolean addBooking(Booking booking) {
@@ -45,7 +58,7 @@ public class BookingDAO {
 
     public Optional<Booking> getBookingById(UUID id){
         for (Booking b : bookings){
-            if (b != null && b.getId().equals(id)){
+            if (b != null && b.getBookingId().equals(id)){
                 return Optional.of(b);
             }
         }
@@ -75,7 +88,7 @@ public class BookingDAO {
 
         Booking[] bookingList = bookings;
         for (int i = 0; i < bookingList.length; i++) {
-            if (bookingList[i] != null && bookingList[i].getId().equals(id)) {
+            if (bookingList[i] != null && bookingList[i].getBookingId().equals(id)) {
                 bookingList[i] = null;
                 currentNumberOfBookings--;
                 return true;

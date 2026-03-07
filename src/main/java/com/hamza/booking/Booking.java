@@ -1,8 +1,5 @@
 package com.hamza.booking;
 
-import com.hamza.car.Car;
-import com.hamza.user.User;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -10,39 +7,40 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class Booking {
-    private final BookingService bookingService = new BookingService();
 
-    private UUID id;
+    private UUID bookingId;
     private UUID userId;
     private UUID carId;
     private BigDecimal price;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
     private LocalDateTime createdAt;
 
 
     public Booking(
+            UUID bookingId,
             UUID userId,
             UUID carId,
             BigDecimal price,
-            LocalDate startDate,
-            LocalDate endDate
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            LocalDateTime createdAt
     ) {
-        this.id = bookingService.generateUserId();
+        this.bookingId = bookingId;
         this.userId = userId;
         this.carId = carId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.price = price;
-        this.createdAt = bookingService.returnBookingTime();
+        this.createdAt = createdAt;
     }
 
-    public UUID getId() {
-        return id;
+    public UUID getBookingId() {
+        return bookingId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setBookingId(UUID bookingId) {
+        this.bookingId = bookingId;
     }
 
     public UUID getUserId() {
@@ -69,19 +67,19 @@ public class Booking {
         this.price = price;
     }
 
-    public LocalDate getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 
@@ -96,7 +94,7 @@ public class Booking {
     @Override
     public String toString() {
         return "Booking{" +
-                "id=" + id +
+                "id=" + bookingId +
                 ", userId=" + userId +
                 ", carId=" + carId +
                 ", price=" + price +
@@ -110,7 +108,7 @@ public class Booking {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return Objects.equals(id, booking.id) &&
+        return Objects.equals(bookingId, booking.bookingId) &&
                 Objects.equals(userId, booking.userId) &&
                 Objects.equals(carId, booking.carId) &&
                 Objects.equals(price, booking.price) &&
@@ -121,6 +119,6 @@ public class Booking {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, carId, price, startDate, endDate, createdAt);
+        return Objects.hash(bookingId, userId, carId, price, startDate, endDate, createdAt);
     }
 }

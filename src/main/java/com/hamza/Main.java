@@ -11,7 +11,10 @@ import com.hamza.user.UserService;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class Main {
@@ -35,6 +38,7 @@ public class Main {
                 if (choice < 1 || choice > 8) {
                     throw new Exception("Invalid option ❌ Try again");
                 }
+
 
                 switch (choice) {
                     case 1:
@@ -84,7 +88,8 @@ public class Main {
     }
 
     private static void welcomeMessage() {
-        System.out.println("Hi! Welcome to your car booking app. ");
+        System.out.println("🚗 Welcome to Car Booking System! 🚗");
+        System.out.println("=====================================\n");
         System.out.println("Please select one of the options to get started: ");
         System.out.println("1️⃣ - Book Car");
         System.out.println("2️⃣ - View All User Booked Cars");
@@ -98,6 +103,9 @@ public class Main {
 
     private static void bookCar(UserService userService, CarService carService, BookingService bookingService, Scanner scanner) throws Exception {
         System.out.println("Which user is booking a vehicle? ");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM dd yyyy");
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = null;
 
         viewUsers(userService);
         UUID userId = UUID.fromString(scanner.nextLine());
@@ -108,17 +116,23 @@ public class Main {
         UUID carId = UUID.fromString(scanner.nextLine());
 
         System.out.println("What is the start date for your reservation? (mm dd yyyy)");
-        String startDate = scanner.nextLine();
+        String startDateStr = scanner.nextLine();
 
         System.out.println("What is the end date for your reservation? (mm dd yyyy)");
-        String endDate = scanner.nextLine();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM dd yyyy");
+        String endDateStr = scanner.nextLine();
+
+        try {
+            startDate = LocalDateTime.of(LocalDate.parse(startDateStr, formatter), LocalTime.of(12,00));
+            endDate = LocalDateTime.of(LocalDate.parse(endDateStr, formatter), LocalTime.of(12,00));
+        }
+        catch (DateTimeParseException e) {
+            throw e;
+        }
 
         boolean result = bookingService.bookCar(userId, carId, startDate, endDate, formatter);
         if (result){
             System.out.println("✅ Booking is created successfully!");
         }
-
     }
 
     private static void viewUserBookedCars(UserService userService, BookingService bookingService, Scanner scanner) {
