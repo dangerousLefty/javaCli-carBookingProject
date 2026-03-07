@@ -29,7 +29,7 @@ public class BookingDAO {
         Booking[] returnList = new Booking[count];
 
         int insertCount = 0;
-        for (int i = 0; i < bookings.length && insertCount < count; i++){
+        for (int i = 0; i < bookings.length; i++){
             if (bookings[i] != null){
                 returnList[insertCount] = bookings[i];
                 insertCount++;

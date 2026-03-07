@@ -36,29 +36,35 @@ public class BookingService {
 
     public boolean bookCar(UUID userId, UUID carId, LocalDateTime startDate, LocalDateTime endDate, DateTimeFormatter formatter) throws Exception {
 
-        User tempUser = userService.getUser(userId);
-        Car tempCar = carService.getCar(carId);
-        if (tempCar.getBooked()){
+        User user;
+        Car car;
+
+        try {
+            user = userService.getUser(userId);
+            car = carService.getCar(carId);
+        }
+        catch (NoSuchElementException e){
+            throw new NoSuchElementException(e.getMessage());
+        }
+
+        if (car.getBooked()){
             throw new Exception("❌ Car is already rented out");
         }
 
-        if (startDate.isAfter(endDate)){
+        if (startDate.isAfter(endDate) || endDate.isBefore(startDate)){
             throw new Exception("❌ Start date cannot be after End Date");
         }
 
-        if (endDate.isBefore(startDate)){
-            throw new Exception("❌ End date cannot be before Start Date");
-        }
         BigDecimal finalPrice = calculatePrice(
-                startDate, endDate, tempCar.getRentalRate()
+                startDate, endDate, car.getRentalRate()
         );
-        tempCar.setBooked(true);
+        car.setBooked(true);
         UUID bookingId = UUID.randomUUID();
         LocalDateTime bookingTime = LocalDateTime.now();
         Booking newBooking = new Booking(
                 bookingId,
                 userId,
-                tempCar.getId(),
+                car.getId(),
                 finalPrice,
                 startDate,
                 endDate,
