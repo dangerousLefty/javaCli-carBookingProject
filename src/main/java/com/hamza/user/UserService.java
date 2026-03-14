@@ -1,21 +1,22 @@
 package com.hamza.user;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 public class UserService {
-    private final UserDAO userDAO = new UserDAO();
-
+    //private final UserArrayDataAccessService userArrayDataAccessService = new UserArrayDataAccessService();
+    private final UserFileDataAccessService userFileDataAccessService = new UserFileDataAccessService();
     public User getUser(UUID id){
-        return userDAO.findUserById(id)
+        //return userArrayDataAccessService.findUserById(id)
+        return userFileDataAccessService.findUserById(id)
                 .orElseThrow(() -> new NoSuchElementException(
                         "❌ User not found with id ".concat(id.toString())
                 ));
     }
 
     public User[] getUsers() {
-        return userDAO.getUsers();
+        //return userArrayDataAccessService.getUsers();
+        return userFileDataAccessService.getUsers();
     }
 
 }
