@@ -4,7 +4,11 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class CarService {
-    private final CarDAO carDAO = new CarDAO();
+    private final CarDAO carDAO;
+
+    public CarService(CarDAO carDAO) {
+        this.carDAO = carDAO;
+    }
 
     public Car getCar(UUID id){
         return carDAO.findCarById(id)

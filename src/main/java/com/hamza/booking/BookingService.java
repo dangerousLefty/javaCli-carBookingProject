@@ -15,9 +15,15 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class BookingService {
-    private final BookingDAO bookingDAO = new BookingDAO();
-    private final UserService userService = new UserService();
-    private final CarService carService = new CarService();
+    private final BookingDAO bookingDAO;
+    private final UserService userService;
+    private final CarService carService;
+
+    public BookingService(BookingDAO bookingDAO, UserService userService, CarService carService) {
+        this.bookingDAO = bookingDAO;
+        this.userService = userService;
+        this.carService = carService;
+    }
 
     private BigDecimal calculatePrice(LocalDateTime startDate, LocalDateTime endDate, BigDecimal rentalRate){
         long daysCount = ChronoUnit.DAYS.between(startDate, endDate) + 1;

@@ -4,9 +4,12 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class UserService {
-    //private final UserArrayDataAccessService userDAO = new UserArrayDataAccessService();
-    private final UserFileDataAccessService userDAO = new UserFileDataAccessService();
-    //test making changes
+    private final UserDAO userDAO;
+
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
     public User getUser(UUID id){
         return userDAO.findUserById(id)
                 .orElseThrow(() -> new NoSuchElementException(

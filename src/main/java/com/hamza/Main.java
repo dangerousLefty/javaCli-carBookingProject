@@ -1,11 +1,14 @@
 package com.hamza;
 
 import com.hamza.booking.Booking;
+import com.hamza.booking.BookingDAO;
 import com.hamza.booking.BookingService;
 import com.hamza.car.Car;
+import com.hamza.car.CarDAO;
 import com.hamza.car.CarService;
 import com.hamza.car.CarType;
 import com.hamza.user.User;
+import com.hamza.user.UserFileDataAccessService;
 import com.hamza.user.UserService;
 
 import java.lang.reflect.Array;
@@ -21,9 +24,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        UserService userService = new UserService();
-        CarService carService = new CarService();
-        BookingService bookingService = new BookingService();
+        UserFileDataAccessService fileDataAccessService = new UserFileDataAccessService();
+        CarDAO carDAO = new CarDAO();
+        BookingDAO bookingDAO = new BookingDAO();
+
+        UserService userService = new UserService(fileDataAccessService);
+        CarService carService = new CarService(carDAO);
+        BookingService bookingService = new BookingService(bookingDAO, userService, carService);
 
 
         Scanner scanner = new Scanner(System.in);
