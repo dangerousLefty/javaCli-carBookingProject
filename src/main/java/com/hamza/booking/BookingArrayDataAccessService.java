@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BookingArrayDataAccessService implements BookingDAO{
+public class BookingArrayDataAccessService implements BookingDAO {
 
     private static Booking[] bookings;
     private static int maxBookings = 100;
@@ -88,7 +88,6 @@ public class BookingArrayDataAccessService implements BookingDAO{
 
     @Override
     public boolean deleteBooking(UUID id) {
-
         Booking[] bookingList = bookings;
         for (int i = 0; i < bookingList.length; i++) {
             if (bookingList[i] != null && bookingList[i].getBookingId().equals(id)) {
