@@ -5,11 +5,10 @@ import com.hamza.car.CarService;
 import com.hamza.user.User;
 import com.hamza.user.UserService;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -34,7 +33,7 @@ public class BookingService {
     }
 
     public Booking getBookingById(UUID id){
-        return bookingDAO.getBookingById(id)
+        return bookingDAO.findBookingById(id)
                 .orElseThrow(() -> new NoSuchElementException(
                         "❌ Booking not found with given id"
                 ));
@@ -77,7 +76,7 @@ public class BookingService {
                 bookingTime
         );
 
-        return bookingDAO.addBooking(newBooking);
+        return bookingDAO.saveBooking(newBooking);
     }
 
     public boolean deleteBooking(UUID id){
@@ -89,17 +88,20 @@ public class BookingService {
     }
 
     public Booking[] getUserBookings(UUID id){
-        User u = userService.getUser(id);
-        //^ this method checks if the user exists or not. (Is this correct way to implement?)
+        try {
+            User u = userService.getUser(id);
+        } catch (NoSuchElementException e) {
+            e.getMessage();
+        }
         return bookingDAO.getUserBookings(id);
     }
 
-    public Booking[] getBookings(){
+    public Booking[] getBookings() {
         return bookingDAO.getBookings();
     }
 
     public int getCurrentNumberOfBookings(){
-        return bookingDAO.getCurrentNumberOfBookings();
+        return bookingDAO.getBookings().length;
     }
 
 }

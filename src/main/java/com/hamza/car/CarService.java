@@ -17,10 +17,6 @@ public class CarService {
                 ));
     }
 
-    public Car[] getCars(){
-        return carDAO.getCars();
-    }
-
     public Car[] getAvailableCars(){
         return carDAO.getAvailableCars();
     }

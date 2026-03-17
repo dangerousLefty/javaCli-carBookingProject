@@ -2,17 +2,14 @@ package com.hamza;
 
 import com.hamza.booking.Booking;
 import com.hamza.booking.BookingDAO;
+import com.hamza.booking.BookingFileDataAccessService;
 import com.hamza.booking.BookingService;
-import com.hamza.car.Car;
-import com.hamza.car.CarDAO;
-import com.hamza.car.CarService;
-import com.hamza.car.CarType;
+import com.hamza.car.*;
 import com.hamza.user.User;
+import com.hamza.user.UserDAO;
 import com.hamza.user.UserFileDataAccessService;
 import com.hamza.user.UserService;
 
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,13 +21,13 @@ public class Main {
 
     public static void main(String[] args) {
 
-        UserFileDataAccessService fileDataAccessService = new UserFileDataAccessService();
-        CarDAO carDAO = new CarDAO();
-        BookingDAO bookingDAO = new BookingDAO();
+        UserDAO userDAO = new UserFileDataAccessService();
+        CarDAO carDAO = new CarArrayDataAccessService();
+        BookingDAO bookingDao = new BookingFileDataAccessService();
 
-        UserService userService = new UserService(fileDataAccessService);
+        UserService userService = new UserService(userDAO);
         CarService carService = new CarService(carDAO);
-        BookingService bookingService = new BookingService(bookingDAO, userService, carService);
+        BookingService bookingService = new BookingService(bookingDao, userService, carService);
 
 
         Scanner scanner = new Scanner(System.in);
@@ -139,6 +136,9 @@ public class Main {
         boolean result = bookingService.bookCar(userId, carId, startDate, endDate, formatter);
         if (result){
             System.out.println("✅ Booking is created successfully!");
+        }
+        else {
+            System.out.println("❌ There was an issue saving the booking, please try again");
         }
     }
 
