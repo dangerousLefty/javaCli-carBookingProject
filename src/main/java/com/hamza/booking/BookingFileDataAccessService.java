@@ -1,142 +1,194 @@
 package com.hamza.booking;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
 public class BookingFileDataAccessService implements BookingDAO {
 
-    private static final String bookingFile = "src/main/java/com/hamza/bookings.bin";
+    private static final String bookingFilePath = "src/main/java/com/hamza/bookings.bin";
+    private static final File bookingFile = new File(bookingFilePath);
 
     static {
-        File file = new File(bookingFile);
-
-        if (file.exists()) {
-            file.delete();
+        if (bookingFile.exists()) {
+            bookingFile.delete();
         }
     }
 
     @Override
-    public Booking[] getBookings(){
-        File file = new File(bookingFile);
-        if (!file.exists()) {
-            return new Booking[0]; // empty array if no bookings yet
-        }
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            return (Booking[]) in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Failed to read bookings file", e);
-        }
-    }
+    public boolean saveBooking(Booking booking) {
 
-    @Override
-    public Booking[] getUserBookings(UUID userId) {
-        File file = new File(bookingFile);
-        Booking[] bookings = getBookings();
-        int count = 0;
-        for (Booking b : bookings){
-            if (b != null && b.getUserId().equals(userId)){
-                count++;
+        if (!bookingFile.exists()) {
+            try {
+                bookingFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Error creating bookings file", e);
             }
         }
-        Booking[] returnList = new Booking[count];
-        int booking = 0;
-        for (int i = 0; i < bookings.length && booking < count; i++){
-            if (bookings[i] != null && bookings[i].getUserId().equals(userId)){
-                returnList[booking] = bookings[i];
-                booking++;
-            }
-        }
+        boolean append = bookingFile.exists() && bookingFile.length() > 0;
 
-        return returnList;
+        try (ObjectOutputStream out = append
+                ? new AppendableObjectOutputStream(new FileOutputStream(bookingFile, true))
+                : new ObjectOutputStream(new FileOutputStream(bookingFile))) {
+
+            out.writeObject(booking);
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save booking", e);
+        }
     }
 
     @Override
     public Optional<Booking> findBookingById(UUID bookingId) {
-        try(
-                FileInputStream fileIn = new FileInputStream(bookingFile);
-                ObjectInputStream in = new ObjectInputStream(fileIn);
-        ) {
-            Booking[] bookings = (Booking[]) in.readObject();
-
-            for (Booking b : bookings){
-                if (b != null && b.getBookingId().equals(bookingId)){
-                    return Optional.of(b);
+        if (!bookingFile.exists() || bookingFile.length() == 0) {
+            return Optional.empty();
+        }
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
+            while (true) {
+                try {
+                    Booking b = (Booking) in.readObject();
+                    if (b != null && b.getBookingId().equals(bookingId)) {
+                        return Optional.of(b);
+                    }
+                } catch (EOFException e) {
+                    break;
                 }
             }
-        } catch (IOException | ClassNotFoundException e){
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException("Failed to read bookings file", e);
         }
         return Optional.empty();
     }
 
     @Override
-    public boolean saveBooking(Booking booking){
-        Booking[] bookings = null;
-        File file = new File(bookingFile);
-
-        if (!file.exists()){
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException("Error creating bookings file" ,e);
-            }
+    public Booking[] getBookings() {
+        int count = 0;
+        Booking[] bookings;
+        if (!bookingFile.exists() || bookingFile.length() < 1) {
+            return new Booking[0];
         }
 
-        // Step 1: read existing bookings if file exists
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
-                bookings = (Booking[]) in.readObject();
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
+            while (true) {
+                try {
+                    Booking b = (Booking) in.readObject();
+                    if (b != null) {
+                        count++;
+                    }
+                } catch (EOFException e) {
+                    break;
+                }
             }
-            catch (EOFException e){
-                bookings = new Booking[0];
-            }
-            catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException("Failed to read bookings file", e);
-            }
-
-        // Step 2: create new array with extra slot
-        Booking[] updatedBookings = Arrays.copyOf(bookings, bookings.length + 1);
-        updatedBookings[bookings.length] = booking;
-
-        // Step 3: write the updated array back
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
-            out.writeObject(updatedBookings);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write bookings file", e);
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Failed to read bookings file", e);
         }
-        return true;
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
+            int index = 0;
+            bookings = new Booking[count];
+            while (index < count) {
+                try {
+                    Booking b = (Booking) in.readObject();
+                    bookings[index] = b;
+                    index++;
+                } catch (EOFException e) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Failed to read bookings file", e);
+        }
+        return bookings;
+    }
+
+    @Override
+    public Booking[] getUserBookings(UUID userId) {
+        int count = 0;
+        Booking[] userBookings;
+        if (!bookingFile.exists() || bookingFile.length() < 1) {
+            return new Booking[0];
+        }
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
+            while (true) {
+                try {
+                    Booking b = (Booking) in.readObject();
+                    if (b != null && b.getUserId().equals(userId)) {
+                        count++;
+                    }
+                } catch (EOFException e) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Failed to read bookings file", e);
+        }
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
+            int index = 0;
+            userBookings = new Booking[count];
+            while (index < count) {
+                try {
+                    Booking b = (Booking) in.readObject();
+                    if (b != null && b.getUserId().equals(userId)) {
+                        userBookings[index] = b;
+                        index++;
+                    }
+                } catch (EOFException e) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Failed to read bookings file", e);
+        }
+        return userBookings;
     }
 
     @Override
     public boolean deleteBooking(UUID bookingId) {
-        File file = new File(bookingFile);
-        Booking[] bookings = getBookings();
-        int index = -1;
+        if (!bookingFile.exists() || bookingFile.length() < 1) {
+            return false;
+        }
 
-        for (int i = 0; i < bookings.length; i++) {
-            if (bookings[i].getBookingId().equals(bookingId)) {
-                index = i;
-                break;
-            }
+        Optional<Booking> bookingToDelete = findBookingById(bookingId);
+        if (bookingToDelete.isEmpty()) {
+            return false;
         }
-        if (index == -1) {return false;}
 
-        //create array without deleted booking
-        Booking[] updated = new Booking[bookings.length - 1];
-        for (int i = 0, j = 0; i < bookings.length; i++){
-            if (i == index){
-                continue;
+        File tempFile = new File("src/main/java/com/hamza/temp.bin");
+        try (
+                ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile));
+                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(tempFile))
+        ) {
+            while (true) {
+                try {
+                    Booking b = (Booking) in.readObject();
+                    if (b.getBookingId().equals(bookingId)) {
+                        continue;
+                    }
+                    out.writeObject(b);
+                } catch (EOFException e) {
+                    break;
+                }
             }
-            updated[j] = bookings[i];
-            j++;
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Error deleting booking", e);
         }
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
-            out.writeObject(updated);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to write bookings file", e);
-        }
+
+        bookingFile.delete();
+        tempFile.renameTo(bookingFile);
+
         return true;
+    }
 
+    //this class will be used to append to bin file without adding a new header
+    class AppendableObjectOutputStream extends ObjectOutputStream {
+        public AppendableObjectOutputStream(OutputStream out) throws IOException {
+            super(out);
+        }
+
+        @Override
+        protected void writeStreamHeader() throws IOException {
+            reset(); // prevents header duplication
+        }
     }
 }
