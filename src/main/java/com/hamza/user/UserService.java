@@ -1,11 +1,14 @@
 package com.hamza.user;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 public class UserService {
-    private final UserDAO userDAO = new UserDAO();
+    private final UserDAO userDAO;
+
+    public UserService(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 
     public User getUser(UUID id){
         return userDAO.findUserById(id)
