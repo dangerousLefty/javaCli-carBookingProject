@@ -10,15 +10,16 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class BookingService {
-    private final BookingDAO bookingDAO;
+    private final BookingDAOLists bookingDAO;
     private final UserService userService;
     private final CarService carService;
 
-    public BookingService(BookingDAO bookingDAO, UserService userService, CarService carService) {
+    public BookingService(BookingDAOLists bookingDAO, UserService userService, CarService carService) {
         this.bookingDAO = bookingDAO;
         this.userService = userService;
         this.carService = carService;
@@ -87,7 +88,7 @@ public class BookingService {
         return bookingDAO.deleteBooking(id);
     }
 
-    public Booking[] getUserBookings(UUID id){
+    public List<Booking> getUserBookings(UUID id){
         try {
             User u = userService.getUser(id);
         } catch (NoSuchElementException e) {
@@ -96,12 +97,12 @@ public class BookingService {
         return bookingDAO.getUserBookings(id);
     }
 
-    public Booking[] getBookings() {
+    public List<Booking> getBookings() {
         return bookingDAO.getBookings();
     }
 
     public int getCurrentNumberOfBookings(){
-        return bookingDAO.getBookings().length;
+        return bookingDAO.getBookings().size();
     }
 
 }

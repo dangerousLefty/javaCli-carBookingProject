@@ -1,12 +1,13 @@
 package com.hamza.user;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class UserService {
-    private final UserDAO userDAO;
+    private final UserDAOLists userDAO;
 
-    public UserService(UserDAO userDAO) {
+    public UserService(UserDAOLists userDAO) {
         this.userDAO = userDAO;
     }
 
@@ -17,7 +18,7 @@ public class UserService {
                 ));
     }
 
-    public User[] getUsers() {
+    public List<User> getUsers() {
         return userDAO.getUsers();
     }
 

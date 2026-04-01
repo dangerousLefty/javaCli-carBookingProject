@@ -1,12 +1,13 @@
 package com.hamza.car;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class CarService {
-    private final CarDAO carDAO;
+    private final CarDAOLists carDAO;
 
-    public CarService(CarDAO carDAO) {
+    public CarService(CarDAOLists carDAO) {
         this.carDAO = carDAO;
     }
 
@@ -17,11 +18,10 @@ public class CarService {
                 ));
     }
 
-    public Car[] getAvailableCars(){
+    public List<Car> getAvailableCars(){
         return carDAO.getAvailableCars();
     }
-
-    public Car[] getAvailableCarsByType(CarType type){
+    public List<Car> getAvailableCarsByType(CarType type){
         return carDAO.getAvailableCarByType(type);
     }
 

@@ -1,14 +1,8 @@
 package com.hamza;
 
-import com.hamza.booking.Booking;
-import com.hamza.booking.BookingDAO;
-import com.hamza.booking.BookingFileDataAccessService;
-import com.hamza.booking.BookingService;
+import com.hamza.booking.*;
 import com.hamza.car.*;
-import com.hamza.user.User;
-import com.hamza.user.UserDAO;
-import com.hamza.user.UserFileDataAccessService;
-import com.hamza.user.UserService;
+import com.hamza.user.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,9 +15,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        UserDAO userDAO = new UserFileDataAccessService();
-        CarDAO carDAO = new CarArrayDataAccessService();
-        BookingDAO bookingDao = new BookingFileDataAccessService();
+        UserDAOLists userDAO = new UserFileDataAccessService();
+        CarDAOLists carDAO = new CarListDataAccessService();
+        BookingDAOLists bookingDao = new BookingFileDataAccessService();
 
         UserService userService = new UserService(userDAO);
         CarService carService = new CarService(carDAO);
@@ -115,8 +109,8 @@ public class Main {
         UUID userId = UUID.fromString(scanner.nextLine());
 
         System.out.println("Which vehicle would user like to rent? ");
-        Car[] list =  carService.getAvailableCars();
-        printList(list);
+        List<Car> carList =  carService.getAvailableCars();
+        printList(carList);
         UUID carId = UUID.fromString(scanner.nextLine());
 
         System.out.println("What is the start date for your reservation? (mm dd yyyy)");
@@ -147,8 +141,8 @@ public class Main {
         System.out.println("Which user's bookings would you like to view?");
         viewUsers(userService);
         User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
-        Booking[] bookingList = bookingService.getUserBookings(tempUser.getUserID());
-        if (bookingList.length > 0){
+        List<Booking> bookingList = bookingService.getUserBookings(tempUser.getUserID());
+        if (bookingList.size() > 0){
             System.out.println("Here are the list of Bookings in the system");
             System.out.println("-------------------------------------------");
         }
@@ -164,7 +158,7 @@ public class Main {
             return;
         }
 
-        Booking[] bookingList = bookingService.getBookings();
+        List<Booking> bookingList = bookingService.getBookings();
         System.out.println("Here are the list of Bookings in the system");
         System.out.println("-------------------------------------------");
         printList(bookingList);
@@ -172,15 +166,13 @@ public class Main {
 
     private static void viewAllCars(CarService carService){
         System.out.println("Here are the available cars that i found");
-        Car[] carList = carService.getAvailableCars();
-        //carService.printCars(carList);
+        List<Car> carList = carService.getAvailableCars();
         printList(carList);
     }
 
     private static void viewCarsByType(CarService carService, CarType type){
         System.out.println("Here are the " + type + " cars that i found");
-        Car[] carList = carService.getAvailableCarsByType(type);
-        //carService.printCars(carList);
+        List<Car> carList = carService.getAvailableCarsByType(type);
         printList(carList);
     }
 
@@ -200,10 +192,10 @@ public class Main {
         printList(userService.getUsers());
     }
 
-    private static void printList(Object[] arr){
-        for (Object o : arr){
-            if (o != null){
-                System.out.println(o);
+    private static <T> void printList(List<T> arr){
+        for (T item : arr){
+            if (item != null){
+                System.out.println(item);
             }
         }
     }
