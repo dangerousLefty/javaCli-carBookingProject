@@ -5,13 +5,13 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public class UserService {
-    private final UserDAOLists userDAO;
+    private final UserDAO userDAO;
 
-    public UserService(UserDAOLists userDAO) {
+    public UserService(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
 
-    public User getUser(UUID id){
+    public User getUser(UUID id) {
         return userDAO.findUserById(id)
                 .orElseThrow(() -> new NoSuchElementException(
                         "❌ User not found with id ".concat(id.toString())

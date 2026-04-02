@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BookingFileDataAccessService implements BookingDAOLists {
+public class BookingFileDataAccessService implements BookingDAO {
 
     private static final String bookingFilePath = "src/main/java/com/hamza/bookings.bin";
     private static final File bookingFile = new File(bookingFilePath);
@@ -29,9 +29,7 @@ public class BookingFileDataAccessService implements BookingDAOLists {
 
         boolean append = bookingFile.length() > 0;
 
-        try (ObjectOutputStream out = append
-                ? new AppendableObjectOutputStream(new FileOutputStream(bookingFile, true))
-                : new ObjectOutputStream(new FileOutputStream(bookingFile))) {
+        try (ObjectOutputStream out = append ? new AppendableObjectOutputStream(new FileOutputStream(bookingFile, true)) : new ObjectOutputStream(new FileOutputStream(bookingFile))) {
 
             out.writeObject(booking);
             return true;
@@ -125,10 +123,7 @@ public class BookingFileDataAccessService implements BookingDAOLists {
         File tempFile = new File("src/main/java/com/hamza/temp.bin");
         boolean deleted = false;
 
-        try (
-                ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile));
-                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(tempFile))
-        ) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile)); ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(tempFile))) {
             while (true) {
                 try {
                     Booking booking = (Booking) in.readObject();

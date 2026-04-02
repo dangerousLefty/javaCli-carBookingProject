@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-public class UserFileDataAccessService implements UserDAOLists{
+public class UserFileDataAccessService implements UserDAO {
 
     //private static User[] userList;
     private static List<User> userList = new ArrayList<>();

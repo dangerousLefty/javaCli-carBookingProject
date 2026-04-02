@@ -3,7 +3,7 @@ package com.hamza.user;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserArrayDataAccessService implements UserDAO {
+public class UserArrayDataAccessService {
 
     private static final User[] userList;
 

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class CarListDataAccessService implements CarDAOLists{
+public class CarListDataAccessService implements CarDAO {
     //private static final Car[] carList;
     private static final List<Car> carList;
 
@@ -22,17 +22,17 @@ public class CarListDataAccessService implements CarDAOLists{
         );
     }
 
-    public void printCars(List<Car> list){
-        for (Car c : list){
+    public void printCars(List<Car> list) {
+        for (Car c : list) {
             System.out.println(c);
         }
     }
 
     @Override
-    public List<Car> getAvailableCars(){
+    public List<Car> getAvailableCars() {
         List<Car> availableCars = new ArrayList<>();
-        for (Car c : carList){
-            if (!c.getBooked()){
+        for (Car c : carList) {
+            if (!c.getBooked()) {
                 availableCars.add(c);
             }
         }
@@ -41,11 +41,11 @@ public class CarListDataAccessService implements CarDAOLists{
     }
 
     @Override
-    public List<Car> getAvailableCarByType(CarType type){
+    public List<Car> getAvailableCarByType(CarType type) {
         List<Car> availableCars = new ArrayList<>();
 
-        for (Car c : carList){
-            if (!c.getBooked() && c.getType().equals(type)){
+        for (Car c : carList) {
+            if (!c.getBooked() && c.getType().equals(type)) {
                 availableCars.add(c);
             }
         }
@@ -53,9 +53,9 @@ public class CarListDataAccessService implements CarDAOLists{
     }
 
     @Override
-    public Optional<Car> findCarById(UUID id){
-        for (Car c : carList){
-            if (id.equals(c.getId())){
+    public Optional<Car> findCarById(UUID id) {
+        for (Car c : carList) {
+            if (id.equals(c.getId())) {
                 return Optional.of(c);
             }
         }

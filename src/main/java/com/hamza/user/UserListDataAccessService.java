@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class UserListDataAccessService implements UserDAOLists {
+public class UserListDataAccessService implements UserDAO {
 
     //private static final User[] userList;
     private static final List<User> userList;
@@ -25,14 +25,14 @@ public class UserListDataAccessService implements UserDAOLists {
         ));
     }
 
-    public List<User> getUsers(){
+    public List<User> getUsers() {
         return userList;
     }
 
-    public Optional<User> findUserById(UUID id){
+    public Optional<User> findUserById(UUID id) {
         //Optional<User> returnUser;
-        for (User u : userList){
-            if (u.getUserID().equals(id)){
+        for (User u : userList) {
+            if (u.getUserID().equals(id)) {
                 return Optional.of(u);
             }
         }

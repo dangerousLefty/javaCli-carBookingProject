@@ -15,9 +15,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        UserDAOLists userDAO = new UserFileDataAccessService();
-        CarDAOLists carDAO = new CarListDataAccessService();
-        BookingDAOLists bookingDao = new BookingFileDataAccessService();
+        UserDAO userDAO = new UserFileDataAccessService();
+        CarDAO carDAO = new CarListDataAccessService();
+        BookingDAO bookingDao = new BookingFileDataAccessService();
 
         UserService userService = new UserService(userDAO);
         CarService carService = new CarService(carDAO);
@@ -40,7 +40,7 @@ public class Main {
 
                 switch (choice) {
                     case 1:
-                        bookCar(userService, carService, bookingService ,scanner);
+                        bookCar(userService, carService, bookingService, scanner);
                         break;
 
                     case 2:
@@ -53,7 +53,7 @@ public class Main {
 
                     case 4:
                         viewAllBookings(bookingService);
-                        if (bookingService.getCurrentNumberOfBookings() > 0){
+                        if (bookingService.getCurrentNumberOfBookings() > 0) {
                             deleteBookings(bookingService, scanner);
                         }
 
@@ -109,7 +109,7 @@ public class Main {
         UUID userId = UUID.fromString(scanner.nextLine());
 
         System.out.println("Which vehicle would user like to rent? ");
-        List<Car> carList =  carService.getAvailableCars();
+        List<Car> carList = carService.getAvailableCars();
         printList(carList);
         UUID carId = UUID.fromString(scanner.nextLine());
 
@@ -120,18 +120,16 @@ public class Main {
         String endDateStr = scanner.nextLine();
 
         try {
-            startDate = LocalDateTime.of(LocalDate.parse(startDateStr, formatter), LocalTime.of(12,00));
-            endDate = LocalDateTime.of(LocalDate.parse(endDateStr, formatter), LocalTime.of(12,00));
-        }
-        catch (DateTimeParseException e) {
+            startDate = LocalDateTime.of(LocalDate.parse(startDateStr, formatter), LocalTime.of(12, 00));
+            endDate = LocalDateTime.of(LocalDate.parse(endDateStr, formatter), LocalTime.of(12, 00));
+        } catch (DateTimeParseException e) {
             throw e;
         }
 
         boolean result = bookingService.bookCar(userId, carId, startDate, endDate, formatter);
-        if (result){
+        if (result) {
             System.out.println("✅ Booking is created successfully!");
-        }
-        else {
+        } else {
             System.out.println("❌ There was an issue saving the booking, please try again");
         }
     }
@@ -142,18 +140,17 @@ public class Main {
         viewUsers(userService);
         User tempUser = userService.getUser(UUID.fromString(scanner.nextLine()));
         List<Booking> bookingList = bookingService.getUserBookings(tempUser.getUserID());
-        if (bookingList.size() > 0){
+        if (bookingList.size() > 0) {
             System.out.println("Here are the list of Bookings in the system");
             System.out.println("-------------------------------------------");
-        }
-        else {
+        } else {
             System.out.println("❌ No bookings found!");
         }
         printList(bookingList);
     }
 
     private static void viewAllBookings(BookingService bookingService) {
-        if (bookingService.getCurrentNumberOfBookings() == 0){
+        if (bookingService.getCurrentNumberOfBookings() == 0) {
             System.out.println("❌ No bookings found!");
             return;
         }
@@ -164,37 +161,36 @@ public class Main {
         printList(bookingList);
     }
 
-    private static void viewAllCars(CarService carService){
+    private static void viewAllCars(CarService carService) {
         System.out.println("Here are the available cars that i found");
         List<Car> carList = carService.getAvailableCars();
         printList(carList);
     }
 
-    private static void viewCarsByType(CarService carService, CarType type){
+    private static void viewCarsByType(CarService carService, CarType type) {
         System.out.println("Here are the " + type + " cars that i found");
         List<Car> carList = carService.getAvailableCarsByType(type);
         printList(carList);
     }
 
-    private static void deleteBookings(BookingService bookingService, Scanner scanner){
+    private static void deleteBookings(BookingService bookingService, Scanner scanner) {
 
         System.out.println("Which booking would you like to delete? ");
-       boolean isSuccessful =  bookingService.deleteBooking(UUID.fromString(scanner.nextLine()));
-       if (isSuccessful) {
-           System.out.println("✅ Booking deleted successfully");
-       }
-       else {
-           System.out.println("❌ Booking does not exist");
-       }
+        boolean isSuccessful = bookingService.deleteBooking(UUID.fromString(scanner.nextLine()));
+        if (isSuccessful) {
+            System.out.println("✅ Booking deleted successfully");
+        } else {
+            System.out.println("❌ Booking does not exist");
+        }
     }
 
-    private static void viewUsers(UserService userService){
+    private static void viewUsers(UserService userService) {
         printList(userService.getUsers());
     }
 
-    private static <T> void printList(List<T> arr){
-        for (T item : arr){
-            if (item != null){
+    private static <T> void printList(List<T> arr) {
+        for (T item : arr) {
+            if (item != null) {
                 System.out.println(item);
             }
         }
