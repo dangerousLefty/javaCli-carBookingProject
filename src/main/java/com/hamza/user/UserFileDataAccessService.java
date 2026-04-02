@@ -2,39 +2,23 @@ package com.hamza.user;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
-public class UserFileDataAccessService implements UserDAO{
+public class UserFileDataAccessService implements UserDAO {
 
-    private static User[] userList;
+    //private static User[] userList;
+    private static List<User> userList = new ArrayList<>();
 
     static {
         File file = new File("src/main/java/com/hamza/users.csv");
         boolean check =  file.exists();
-        int count = 0;
         Scanner scanner;
-        try {
-            scanner = new Scanner(file);
-            while (scanner.hasNextLine()){
-                count++;
-                scanner.nextLine();
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        scanner.close();
-        userList = new User[count];
-
-        int index = 0;
 
         try {
             scanner = new Scanner(file);
             while (scanner.hasNextLine()){
                 String[] values = scanner.nextLine().split(",");
-                userList[index] = new User(UUID.fromString(values[0]), values[1]);
-                index++;
+                userList.add(new User(UUID.fromString(values[0]), values[1]));
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -42,7 +26,7 @@ public class UserFileDataAccessService implements UserDAO{
     }
 
     @Override
-    public User[] getUsers() {
+    public List<User> getUsers() {
         return userList;
     }
 

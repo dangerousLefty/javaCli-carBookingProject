@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-public class CarArrayDataAccessService implements CarDAO{
+public class CarArrayDataAccessService{
     private static final Car[] carList;
 
     static {
@@ -23,7 +23,6 @@ public class CarArrayDataAccessService implements CarDAO{
         }
     }
 
-    @Override
     public Car[] getAvailableCars(){
         int count = 0;
 
@@ -45,7 +44,6 @@ public class CarArrayDataAccessService implements CarDAO{
         return returnList;
     }
 
-    @Override
     public Car[] getAvailableCarByType(CarType type){
         int count = 0;
 
@@ -67,7 +65,6 @@ public class CarArrayDataAccessService implements CarDAO{
         return returnList;
     }
 
-    @Override
     public Optional<Car> findCarById(UUID id){
         for (Car c : carList){
             if (c.getId().equals(id)){

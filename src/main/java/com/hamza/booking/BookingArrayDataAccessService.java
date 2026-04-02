@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
-public class BookingArrayDataAccessService implements BookingDAO {
+public class BookingArrayDataAccessService {
 
     private static Booking[] bookings;
     private static int maxBookings = 100;
@@ -18,7 +18,6 @@ public class BookingArrayDataAccessService implements BookingDAO {
         return currentNumberOfBookings;
     }
 
-    @Override
     public Booking[] getBookings(){
         int count = 0;
         for (int i = 0; i < bookings.length; i++){
@@ -39,7 +38,6 @@ public class BookingArrayDataAccessService implements BookingDAO {
         return returnList;
     }
 
-    @Override
     public boolean saveBooking(Booking booking) {
         if (currentNumberOfBookings >= maxBookings){
             System.out.println("Expanding storage! Please wait!!");
@@ -57,7 +55,6 @@ public class BookingArrayDataAccessService implements BookingDAO {
         return false;
     }
 
-    @Override
     public Optional<Booking> findBookingById(UUID id){
         for (Booking b : bookings){
             if (b != null && b.getBookingId().equals(id)){
@@ -86,7 +83,6 @@ public class BookingArrayDataAccessService implements BookingDAO {
         return returnList;
     }
 
-    @Override
     public boolean deleteBooking(UUID id) {
         Booking[] bookingList = bookings;
         for (int i = 0; i < bookingList.length; i++) {

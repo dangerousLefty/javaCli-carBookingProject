@@ -16,7 +16,7 @@ public class User {
         return userId;
     }
 
-    public String getUserIdString(){
+    public String getUserIdString() {
         return userId.toString();
     }
 
@@ -41,10 +41,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "userID='" + userId + '\'' +
-                ", name='" + name + '\'' +
-                '}';
+        return "User{" + "userID='" + userId + '\'' + ", name='" + name + '\'' + '}';
     }
 
     @Override
