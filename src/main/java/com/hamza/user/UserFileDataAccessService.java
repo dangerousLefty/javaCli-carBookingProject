@@ -32,11 +32,16 @@ public class UserFileDataAccessService implements UserDAO {
 
     @Override
     public Optional<User> findUserById(UUID id) {
+        /*
         for (User u : userList){
             if (u.getUserID().equals(id)){
                 return Optional.of(u);
             }
         }
         return Optional.empty();
+        */
+        return userList.stream()
+                .filter(u -> u.getUserID().equals(id))
+                .findAny();
     }
 }

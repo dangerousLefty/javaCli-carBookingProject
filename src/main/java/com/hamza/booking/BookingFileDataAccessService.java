@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class BookingFileDataAccessService implements BookingDAO {
 
@@ -29,7 +30,9 @@ public class BookingFileDataAccessService implements BookingDAO {
 
         boolean append = bookingFile.length() > 0;
 
-        try (ObjectOutputStream out = append ? new AppendableObjectOutputStream(new FileOutputStream(bookingFile, true)) : new ObjectOutputStream(new FileOutputStream(bookingFile))) {
+        try (ObjectOutputStream out = append
+                ? new AppendableObjectOutputStream(new FileOutputStream(bookingFile, true))
+                : new ObjectOutputStream(new FileOutputStream(bookingFile))) {
 
             out.writeObject(booking);
             return true;
@@ -38,33 +41,8 @@ public class BookingFileDataAccessService implements BookingDAO {
         }
     }
 
-    @Override
-    public Optional<Booking> findBookingById(UUID bookingId) {
+    private List<Booking> readAllBookings() {
         if (!bookingFile.exists() || bookingFile.length() == 0) {
-            return Optional.empty();
-        }
-
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
-            while (true) {
-                try {
-                    Booking booking = (Booking) in.readObject();
-                    if (booking != null && booking.getBookingId().equals(bookingId)) {
-                        return Optional.of(booking);
-                    }
-                } catch (EOFException e) {
-                    break;
-                }
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Failed to read bookings file", e);
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Booking> getBookings() {
-        if (!bookingFile.exists() || bookingFile.length() < 1) {
             return new ArrayList<>();
         }
 
@@ -73,9 +51,9 @@ public class BookingFileDataAccessService implements BookingDAO {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
             while (true) {
                 try {
-                    Booking b = (Booking) in.readObject();
-                    if (b != null) {
-                        bookings.add(b);
+                    Booking booking = (Booking) in.readObject();
+                    if (booking != null) {
+                        bookings.add(booking);
                     }
                 } catch (EOFException e) {
                     break;
@@ -89,29 +67,22 @@ public class BookingFileDataAccessService implements BookingDAO {
     }
 
     @Override
+    public Optional<Booking> findBookingById(UUID bookingId) {
+        return readAllBookings().stream()
+                .filter(b -> b.getBookingId().equals(bookingId))
+                .findFirst();
+    }
+
+    @Override
+    public List<Booking> getBookings() {
+        return readAllBookings();
+    }
+
+    @Override
     public List<Booking> getUserBookings(UUID userId) {
-        if (!bookingFile.exists() || bookingFile.length() < 1) {
-            return new ArrayList<>();
-        }
-
-        List<Booking> userBookings = new ArrayList<>();
-
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
-            while (true) {
-                try {
-                    Booking b = (Booking) in.readObject();
-                    if (b != null && b.getUserId().equals(userId)) {
-                        userBookings.add(b);
-                    }
-                } catch (EOFException e) {
-                    break;
-                }
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Failed to read bookings file", e);
-        }
-
-        return userBookings;
+        return readAllBookings().stream()
+                .filter(b -> b.getUserId().equals(userId))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -123,7 +94,10 @@ public class BookingFileDataAccessService implements BookingDAO {
         File tempFile = new File("src/main/java/com/hamza/temp.bin");
         boolean deleted = false;
 
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile)); ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(tempFile))) {
+        try (
+                ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile));
+             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(tempFile))
+        ) {
             while (true) {
                 try {
                     Booking booking = (Booking) in.readObject();
