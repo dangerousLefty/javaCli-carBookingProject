@@ -39,14 +39,15 @@ public class CarListDataAccessService implements CarDAO {
     @Override
     public List<Car> getAvailableCarByType(CarType type) {
         return carList.stream()
-                .filter(c -> !c.getBooked() && c.getType().equals(type))
+                .filter(c -> type.equals(c.getType()) && !c.getBooked())
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Car> findCarById(UUID id) {
         return carList.stream()
-                .filter(c -> c.getId().equals(id))
+                //.filter(c -> c.getId().equals(id))
+                .filter(c -> id.equals(c.getId()))
                 .findAny();
     }
 }

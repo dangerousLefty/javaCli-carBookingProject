@@ -69,7 +69,7 @@ public class BookingFileDataAccessService implements BookingDAO {
     @Override
     public Optional<Booking> findBookingById(UUID bookingId) {
         return readAllBookings().stream()
-                .filter(b -> b.getBookingId().equals(bookingId))
+                //.filter(b -> bookingId.equals(b.getBookingId()))
                 .findFirst();
     }
 
@@ -81,8 +81,8 @@ public class BookingFileDataAccessService implements BookingDAO {
     @Override
     public List<Booking> getUserBookings(UUID userId) {
         return readAllBookings().stream()
-                .filter(b -> b.getUserId().equals(userId))
-                .collect(Collectors.toList());
+                .filter(b -> userId.equals(b.getUserId()))
+                .toList();
     }
 
     @Override
