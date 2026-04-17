@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CarListDataAccessService implements CarDAO {
     //private static final Car[] carList;
@@ -30,35 +31,23 @@ public class CarListDataAccessService implements CarDAO {
 
     @Override
     public List<Car> getAvailableCars() {
-        List<Car> availableCars = new ArrayList<>();
-        for (Car c : carList) {
-            if (!c.getBooked()) {
-                availableCars.add(c);
-            }
-        }
-
-        return availableCars;
+        return carList.stream()
+                .filter(c -> !c.getBooked())
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Car> getAvailableCarByType(CarType type) {
-        List<Car> availableCars = new ArrayList<>();
-
-        for (Car c : carList) {
-            if (!c.getBooked() && c.getType().equals(type)) {
-                availableCars.add(c);
-            }
-        }
-        return availableCars;
+        return carList.stream()
+                .filter(c -> type.equals(c.getType()) && !c.getBooked())
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Car> findCarById(UUID id) {
-        for (Car c : carList) {
-            if (id.equals(c.getId())) {
-                return Optional.of(c);
-            }
-        }
-        return Optional.empty();
+        return carList.stream()
+                //.filter(c -> c.getId().equals(id))
+                .filter(c -> id.equals(c.getId()))
+                .findAny();
     }
 }

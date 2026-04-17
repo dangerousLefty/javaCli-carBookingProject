@@ -39,7 +39,13 @@ public class BookingService {
                 ));
     }
 
-    public boolean bookCar(UUID userId, UUID carId, LocalDateTime startDate, LocalDateTime endDate, DateTimeFormatter formatter) throws Exception {
+    public boolean bookCar(
+            UUID userId,
+            UUID carId,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            DateTimeFormatter formatter
+    ) throws Exception {
 
         User user;
         Car car;

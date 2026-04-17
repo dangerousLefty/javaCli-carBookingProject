@@ -6,7 +6,6 @@ import java.util.*;
 
 public class UserFileDataAccessService implements UserDAO {
 
-    //private static User[] userList;
     private static List<User> userList = new ArrayList<>();
 
     static {
@@ -32,11 +31,10 @@ public class UserFileDataAccessService implements UserDAO {
 
     @Override
     public Optional<User> findUserById(UUID id) {
-        for (User u : userList){
-            if (u.getUserID().equals(id)){
-                return Optional.of(u);
-            }
-        }
-        return Optional.empty();
+
+        return userList.stream()
+                //.filter(u -> u.getUserID().equals(id))
+                .filter(u -> id.equals(u.getUserID()))
+                .findFirst();
     }
 }
