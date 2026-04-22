@@ -30,7 +30,7 @@ public class UserArrayDataAccessService {
     public Optional<User> findUserById(UUID id){
         //Optional<User> returnUser;
         for (User u : userList){
-            if (u.getUserID().equals(id)){
+            if (u != null && u.getUserID().equals(id)){
                 return Optional.of(u);
             }
         }

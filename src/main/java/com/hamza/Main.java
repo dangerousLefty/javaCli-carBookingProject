@@ -15,9 +15,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        UserDAO userDAO = new UserFileDataAccessService();
-        CarDAO carDAO = new CarListDataAccessService();
-        BookingDAO bookingDao = new BookingFileDataAccessService();
+        UserDAO userDAO = new UserFakerDataAccessService();
+        CarDAO carDAO = new CarFakerDataAccessService();
+        BookingDAO bookingDao = new BookingFileDataAccessService(System.getProperty("user.dir") + "/bookingData/bookings.bin");
 
         UserService userService = new UserService(userDAO);
         CarService carService = new CarService(carDAO);

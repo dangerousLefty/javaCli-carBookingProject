@@ -35,7 +35,7 @@ public class BookingService {
     public Booking getBookingById(UUID id) {
         return bookingDAO.findBookingById(id)
                 .orElseThrow(() -> new NoSuchElementException(
-                        "❌ Booking not found with given id"
+                        "❌ Booking not found with given id".concat(id.toString())
                 ));
     }
 
@@ -93,11 +93,7 @@ public class BookingService {
     }
 
     public List<Booking> getUserBookings(UUID id) {
-        try {
-            User u = userService.getUser(id);
-        } catch (NoSuchElementException e) {
-            e.getMessage();
-        }
+        User u = userService.getUser(id);
         return bookingDAO.getUserBookings(id);
     }
 
@@ -108,5 +104,6 @@ public class BookingService {
     public int getCurrentNumberOfBookings() {
         return bookingDAO.getBookings().size();
     }
+
 
 }
