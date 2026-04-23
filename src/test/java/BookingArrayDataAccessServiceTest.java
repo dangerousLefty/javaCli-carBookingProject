@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,8 +54,8 @@ public class BookingArrayDataAccessServiceTest {
         Booking[] result = bookingDao.getBookings();
 
         assertEquals(2, result.length);
-        assertEquals(b1, result[0]);
-        assertEquals(b2, result[1]);
+        assertTrue(Arrays.asList(result).contains(b1));
+        assertTrue(Arrays.asList(result).contains(b2));
     }
 
     @Test

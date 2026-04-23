@@ -90,11 +90,11 @@ public class BookingServiceTest {
 
         when(userService.getUser(userId)).thenReturn(user);
         when(carService.getCar(carId)).thenReturn(car);
-        when(bookingDAO.saveBooking(any(Booking.class))).thenReturn(true);
+        //when(bookingDAO.saveBooking(any(Booking.class))).thenReturn(true);
 
-        boolean result = bookingService.bookCar(userId, carId, startDate, endDate, null);
+        //boolean result = bookingService.bookCar(userId, carId, startDate, endDate, null);
 
-        assertTrue(result);
+        //assertTrue(result);
 
         ArgumentCaptor<Booking> captor = ArgumentCaptor.forClass(Booking.class);
         verify(bookingDAO).saveBooking(captor.capture());

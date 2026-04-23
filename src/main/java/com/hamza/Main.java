@@ -126,11 +126,11 @@ public class Main {
             throw e;
         }
 
-        boolean result = bookingService.bookCar(userId, carId, startDate, endDate, formatter);
-        if (result) {
+        try {
+            bookingService.bookCar(userId, carId, startDate, endDate, formatter);
             System.out.println("✅ Booking is created successfully!");
-        } else {
-            System.out.println("❌ There was an issue saving the booking, please try again");
+        } catch (Exception e){
+            System.out.println("❌ Failed to create booking: " + e.getMessage());
         }
     }
 

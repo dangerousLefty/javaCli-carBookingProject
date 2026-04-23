@@ -40,12 +40,17 @@ public class BookingFileDataAccessServiceTest {
 
     @Test
     void shouldSaveBooking() {
+        //Given
         UUID bookingId = UUID.randomUUID();
         Booking booking = createBooking(bookingId, UUID.randomUUID(), UUID.randomUUID());
 
+        //When
         bookingDao.saveBooking(booking);
 
+        //Then
         List<Booking> bookings = bookingDao.getBookings();
+
+        assertNotNull(bookings);
         assertEquals(1, bookings.size());
         assertEquals(bookingId, bookings.get(0).getBookingId());
     }
