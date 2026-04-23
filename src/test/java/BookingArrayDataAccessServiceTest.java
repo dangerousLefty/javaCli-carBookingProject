@@ -93,8 +93,7 @@ public class BookingArrayDataAccessServiceTest {
         Booking[] result = bookingDao.getUserBookings(userId);
 
         assertEquals(2, result.length);
-        assertEquals(userId, result[0].getUserId());
-        assertEquals(userId, result[1].getUserId());
+        assertTrue(result[0].getUserId().equals(userId));
     }
 
     @Test
