@@ -66,11 +66,9 @@ public class CarArrayDataAccessService{
     }
 
     public void resetCars() {
-        carList[0].setBooked(false);
-        carList[1].setBooked(false);
-        carList[2].setBooked(false);
-        carList[3].setBooked(false);
-        carList[4].setBooked(false);
+        for (Car c : carList){
+            c.setBooked(false);
+        }
     }
 
     public Optional<Car> findCarById(UUID id){

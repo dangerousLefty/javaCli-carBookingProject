@@ -43,9 +43,7 @@ public class BookingFileDataAccessServiceTest {
         UUID bookingId = UUID.randomUUID();
         Booking booking = createBooking(bookingId, UUID.randomUUID(), UUID.randomUUID());
 
-        boolean result = bookingDao.saveBooking(booking);
-
-        assertTrue(result);
+        bookingDao.saveBooking(booking);
 
         List<Booking> bookings = bookingDao.getBookings();
         assertEquals(1, bookings.size());

@@ -8,6 +8,6 @@ public interface BookingDAO {
     List<Booking> getBookings();
     List<Booking> getUserBookings(UUID bookingId);
     Optional<Booking> findBookingById(UUID bookingId);
-    boolean saveBooking(Booking booking);
+    void saveBooking(Booking booking);
     boolean deleteBooking(UUID bookingId);
 }

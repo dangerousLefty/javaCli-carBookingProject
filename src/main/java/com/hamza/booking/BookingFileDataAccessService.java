@@ -15,7 +15,7 @@ public class BookingFileDataAccessService implements BookingDAO {
     }
 
     @Override
-    public boolean saveBooking(Booking booking) {
+    public void saveBooking(Booking booking) {
         ensureParentDirectoryExists();
 
         if (!bookingFile.exists()) {
@@ -33,7 +33,6 @@ public class BookingFileDataAccessService implements BookingDAO {
                 : new ObjectOutputStream(new FileOutputStream(bookingFile))) {
 
             out.writeObject(booking);
-            return true;
         } catch (IOException e) {
             throw new RuntimeException("Failed to save booking", e);
         }

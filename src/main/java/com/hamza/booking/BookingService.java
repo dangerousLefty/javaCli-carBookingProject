@@ -35,11 +35,11 @@ public class BookingService {
     public Booking getBookingById(UUID id) {
         return bookingDAO.findBookingById(id)
                 .orElseThrow(() -> new NoSuchElementException(
-                        "❌ Booking not found with given id".concat(id.toString())
+                        "❌ Booking not found with given id " + id
                 ));
     }
 
-    public boolean bookCar(
+    public void bookCar(
             UUID userId,
             UUID carId,
             LocalDateTime startDate,
@@ -81,7 +81,7 @@ public class BookingService {
                 bookingTime
         );
 
-        return bookingDAO.saveBooking(newBooking);
+        bookingDAO.saveBooking(newBooking);
     }
 
     public boolean deleteBooking(UUID id) {
