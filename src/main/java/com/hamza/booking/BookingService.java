@@ -93,7 +93,7 @@ public class BookingService {
     }
 
     public List<Booking> getUserBookings(UUID id) {
-        User u = userService.getUser(id);
+        userService.validateUserExists(id);
         return bookingDAO.getUserBookings(id);
     }
 
