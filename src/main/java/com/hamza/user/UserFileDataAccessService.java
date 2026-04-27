@@ -2,6 +2,7 @@ package com.hamza.user;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.*;
 
 public class UserFileDataAccessService implements UserDAO {
@@ -9,17 +10,25 @@ public class UserFileDataAccessService implements UserDAO {
     private static List<User> userList = new ArrayList<>();
 
     static {
-        File file = new File("src/main/java/com/hamza/users.csv");
-        boolean check =  file.exists();
-        Scanner scanner;
+        //File file = new File("src/main/java/com/hamza/users.csv");
+        try{
+            URL resource = UserFileDataAccessService.class.getClassLoader().getResource("users.csv");
+            if (resource == null) {
+                throw new RuntimeException("users.csv not found in resources");
+            }
 
-        try {
-            scanner = new Scanner(file);
+            File file = new File(resource.getPath());
+            Scanner scanner = new Scanner(file);
+
             while (scanner.hasNextLine()){
                 String[] values = scanner.nextLine().split(",");
                 userList.add(new User(UUID.fromString(values[0]), values[1]));
             }
-        } catch (FileNotFoundException e) {
+
+            scanner.close();
+        }
+
+         catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -33,7 +42,6 @@ public class UserFileDataAccessService implements UserDAO {
     public Optional<User> findUserById(UUID id) {
 
         return userList.stream()
-                //.filter(u -> u.getUserID().equals(id))
                 .filter(u -> id.equals(u.getUserID()))
                 .findFirst();
     }

@@ -5,21 +5,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class BookingFileDataAccessService implements BookingDAO {
 
-    private static final String bookingFilePath = "src/main/java/com/hamza/bookings.bin";
-    private static final File bookingFile = new File(bookingFilePath);
+    private final File bookingFile;
 
-    static {
-        if (bookingFile.exists()) {
-            bookingFile.delete();
-        }
+    public BookingFileDataAccessService(String bookingFilePath) {
+        this.bookingFile = new File(bookingFilePath);
     }
 
     @Override
-    public boolean saveBooking(Booking booking) {
+    public void saveBooking(Booking booking) {
+        ensureParentDirectoryExists();
+
         if (!bookingFile.exists()) {
             try {
                 bookingFile.createNewFile();
@@ -35,41 +33,15 @@ public class BookingFileDataAccessService implements BookingDAO {
                 : new ObjectOutputStream(new FileOutputStream(bookingFile))) {
 
             out.writeObject(booking);
-            return true;
         } catch (IOException e) {
             throw new RuntimeException("Failed to save booking", e);
         }
     }
 
-    private List<Booking> readAllBookings() {
-        if (!bookingFile.exists() || bookingFile.length() == 0) {
-            return new ArrayList<>();
-        }
-
-        List<Booking> bookings = new ArrayList<>();
-
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
-            while (true) {
-                try {
-                    Booking booking = (Booking) in.readObject();
-                    if (booking != null) {
-                        bookings.add(booking);
-                    }
-                } catch (EOFException e) {
-                    break;
-                }
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Failed to read bookings file", e);
-        }
-
-        return bookings;
-    }
-
     @Override
     public Optional<Booking> findBookingById(UUID bookingId) {
         return readAllBookings().stream()
-                //.filter(b -> bookingId.equals(b.getBookingId()))
+                .filter(b -> bookingId.equals(b.getBookingId()))
                 .findFirst();
     }
 
@@ -91,12 +63,12 @@ public class BookingFileDataAccessService implements BookingDAO {
             return false;
         }
 
-        File tempFile = new File("src/main/java/com/hamza/temp.bin");
+        File tempFile = new File(bookingFile.getParentFile(), "temp.bin");
         boolean deleted = false;
 
         try (
                 ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile));
-             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(tempFile))
+                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(tempFile))
         ) {
             while (true) {
                 try {
@@ -132,15 +104,48 @@ public class BookingFileDataAccessService implements BookingDAO {
         return true;
     }
 
-    //this class will be used to append to bin file without adding a new header
-    class AppendableObjectOutputStream extends ObjectOutputStream {
+    private List<Booking> readAllBookings() {
+        if (!bookingFile.exists() || bookingFile.length() == 0) {
+            return new ArrayList<>();
+        }
+
+        List<Booking> bookings = new ArrayList<>();
+
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(bookingFile))) {
+            while (true) {
+                try {
+                    Booking booking = (Booking) in.readObject();
+                    if (booking != null) {
+                        bookings.add(booking);
+                    }
+                } catch (EOFException e) {
+                    break;
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Failed to read bookings file", e);
+        }
+
+        return bookings;
+    }
+
+    private void ensureParentDirectoryExists() {
+        File parent = bookingFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            if (!parent.mkdirs()) {
+                throw new RuntimeException("Failed to create parent directory for booking file");
+            }
+        }
+    }
+
+    private static class AppendableObjectOutputStream extends ObjectOutputStream {
         public AppendableObjectOutputStream(OutputStream out) throws IOException {
             super(out);
         }
 
         @Override
         protected void writeStreamHeader() throws IOException {
-            reset(); // prevents header duplication
+            reset();
         }
     }
 }

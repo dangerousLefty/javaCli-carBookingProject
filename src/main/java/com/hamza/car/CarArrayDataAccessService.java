@@ -65,9 +65,15 @@ public class CarArrayDataAccessService{
         return returnList;
     }
 
+    public void resetCars() {
+        for (Car c : carList){
+            c.setBooked(false);
+        }
+    }
+
     public Optional<Car> findCarById(UUID id){
         for (Car c : carList){
-            if (c.getId().equals(id)){
+            if (c != null && c.getId().equals(id)){
                 return Optional.of(c);
             }
         }

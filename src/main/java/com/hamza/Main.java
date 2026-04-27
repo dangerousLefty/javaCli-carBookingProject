@@ -15,9 +15,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        UserDAO userDAO = new UserFileDataAccessService();
-        CarDAO carDAO = new CarListDataAccessService();
-        BookingDAO bookingDao = new BookingFileDataAccessService();
+        UserDAO userDAO = new UserFakerDataAccessService();
+        CarDAO carDAO = new CarFakerDataAccessService();
+        BookingDAO bookingDao = new BookingFileDataAccessService(System.getProperty("user.dir") + "/bookingData/bookings.bin");
 
         UserService userService = new UserService(userDAO);
         CarService carService = new CarService(carDAO);
@@ -126,11 +126,11 @@ public class Main {
             throw e;
         }
 
-        boolean result = bookingService.bookCar(userId, carId, startDate, endDate, formatter);
-        if (result) {
+        try {
+            bookingService.bookCar(userId, carId, startDate, endDate, formatter);
             System.out.println("✅ Booking is created successfully!");
-        } else {
-            System.out.println("❌ There was an issue saving the booking, please try again");
+        } catch (Exception e){
+            System.out.println("❌ Failed to create booking: " + e.getMessage());
         }
     }
 

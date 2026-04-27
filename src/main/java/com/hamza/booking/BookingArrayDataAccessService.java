@@ -18,6 +18,12 @@ public class BookingArrayDataAccessService {
         return currentNumberOfBookings;
     }
 
+    public void clearAll() {
+        maxBookings = 100;
+        currentNumberOfBookings = 0;
+        bookings = new Booking[maxBookings];
+    }
+
     public Booking[] getBookings(){
         int count = 0;
         for (int i = 0; i < bookings.length; i++){

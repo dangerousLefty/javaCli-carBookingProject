@@ -18,6 +18,10 @@ public class UserService {
                 ));
     }
 
+    public void validateUserExists(UUID id){
+        getUser(id);
+    }
+
     public List<User> getUsers() {
         return userDAO.getUsers();
     }
